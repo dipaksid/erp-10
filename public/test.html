@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test</title>
+    <!-- Include jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Include jQuery UI -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+    <!-- Include Bootstrap CSS (if not already included) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css">
+
+
+</head>
+<body>
+    <h1>TEST</h1>
+    <input type="text" id="autocomplete-input" class="form-control" placeholder="Search">
+
+    <script>
+        $(document).ready(function() {
+            // $("#autocomplete-input").autocomplete({
+            //     source: ["Apple", "Banana", "Baan", "Cherry", "Date", "Fig", "Grape", "Lemon"],
+            //     minLength: 2 // Minimum characters before autocomplete suggestions appear
+            // });
+
+            $("#autocomplete-input").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/customer-groups/customerlist",
+                        dataType: "json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2 // Minimum characters before autocomplete suggestions appear
+            });
+        });
+    </script>
+</body>
+</html>
