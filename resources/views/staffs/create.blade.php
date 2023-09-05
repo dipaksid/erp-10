@@ -201,9 +201,9 @@
             } else if($j(".enterseq").filter("[seq='1']").is("button")){
                 $j("button").filter("[seq='1']").focus();
             }
-            $j("input[name='date_join']").datepicker({format: "dd/mm/yyyy"}).on('changeDate', function(e){
-                $j(this).datepicker('hide');
-            });
+            // $j("input[name='date_join']").datepicker({format: "dd/mm/yyyy"}).on('changeDate', function(e){
+            //     $j(this).datepicker('hide');
+            // });
             $j("input[name='date_join']").keydown(function(event){
                 var keycode = (event.keyCode ? event.keyCode : event.which);
                 switch(keycode) {

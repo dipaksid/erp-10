@@ -99,7 +99,7 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::resource('uoms', App\Http\Controllers\UomsController::class);
     Route::resource('system_settings', App\Http\Controllers\SystemSettingsController::class);
     Route::resource('company_settings', App\Http\Controllers\CompanySettingsController::class);
-    Route::resource('servicesrate','ServiceRateProfileController');
+    Route::resource('services_rates',App\Http\Controllers\ServiceRatesController::class);
     Route::resource('solutionprofile','SolutionProfileController');
     Route::resource('softwareservice','SoftwareServiceController');
     Route::post('/trainingform/updseq', 'TrainingFormController@updseq')->name('trainingform.updseq');
@@ -116,35 +116,35 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::get('/leaveform/docdelete', 'App\Http\Controllers\LeaveFormsController@docdelete');
 
     # SALES INVOICES
-    Route::get('/salesinvoice', 'SalesInvoiceController@index')->name('salesinvoice.index');
-    Route::put('/salesinvoice/{salesinvoice}', 'SalesInvoiceController@update')->name('salesinvoice.update');
-    Route::patch('/salesinvoice/{salesinvoice}', 'SalesInvoiceController@update')->name('salesinvoice.update');
-    Route::post('/salesinvoice', 'SalesInvoiceController@store')->name('salesinvoice.store');
-    Route::get('/salesinvoice/edit', 'SalesInvoiceController@edit')->name('salesinvoice.edit');
-    Route::get('/salesinvoice/checkcust', 'SalesInvoiceController@checkcust')->name('salesinvoice.checkcust');
-    Route::post('/salesinvoice/checkcust', 'SalesInvoiceController@checkcustsales')->name('salesinvoice.checkcustsales');
-    Route::get('/salesinvoice/checkinv', 'SalesInvoiceController@checkinv')->name('salesinvoice.checkinv');
-    Route::post('/salesinvoice/checkinv', 'SalesInvoiceController@checkinvsales')->name('salesinvoice.checkinv');
-    Route::get('/salesinvoice/checkserialnum', 'SalesInvoiceController@checkserialnum')->name('salesinvoice.checkserialnum');
-    Route::post('/salesinvoice/checkserialnum', 'SalesInvoiceController@checkserialnumsales')->name('salesinvoice.checkserialnum');
-    Route::get('/salesinvoice/checkstockcode', 'SalesInvoiceController@checkstockcode')->name('salesinvoice.checkstockcode');
-    Route::post('/salesinvoice/checkstockcode', 'SalesInvoiceController@checkstockcodesales')->name('salesinvoice.checkstockcode');
+    Route::get('/salesinvoice', 'App\Http\Controllers\SalesInvoicesController@index')->name('salesinvoice.index');
+    Route::put('/salesinvoice/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@update')->name('salesinvoice.update');
+    Route::patch('/salesinvoice/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@update')->name('salesinvoice.update');
+    Route::post('/salesinvoice', 'App\Http\Controllers\SalesInvoicesController@store')->name('salesinvoice.store');
+    Route::get('/salesinvoice/edit', 'App\Http\Controllers\SalesInvoicesController@edit')->name('salesinvoice.edit');
+    Route::get('/salesinvoice/checkcust', 'App\Http\Controllers\SalesInvoicesController@checkcust')->name('salesinvoice.checkcust');
+    Route::post('/salesinvoice/checkcust', 'App\Http\Controllers\SalesInvoicesController@checkcustsales')->name('salesinvoice.checkcustsales');
+    Route::get('/salesinvoice/checkinv', 'App\Http\Controllers\SalesInvoicesController@checkinv')->name('salesinvoice.checkinv');
+    Route::post('/salesinvoice/checkinv', 'App\Http\Controllers\SalesInvoicesController@checkinvsales')->name('salesinvoice.checkinv');
+    Route::get('/salesinvoice/checkserialnum', 'App\Http\Controllers\SalesInvoicesController@checkserialnum')->name('salesinvoice.checkserialnum');
+    Route::post('/salesinvoice/checkserialnum', 'App\Http\Controllers\SalesInvoicesController@checkserialnumsales')->name('salesinvoice.checkserialnum');
+    Route::get('/salesinvoice/checkstockcode', 'App\Http\Controllers\SalesInvoicesController@checkstockcode')->name('salesinvoice.checkstockcode');
+    Route::post('/salesinvoice/checkstockcode', 'App\Http\Controllers\SalesInvoicesController@checkstockcodesales')->name('salesinvoice.checkstockcode');
 
-    Route::get('/salesinvoice/invoice/{salesinvoice}', 'SalesInvoiceController@invoicepdf')->name('invoicepdf');
-    Route::get('/salesinvoice/lhinvoice/{salesinvoice}', 'SalesInvoiceController@lhinvoicepdf')->name('lhinvoicepdf');
-    Route::get('/salesinvoice/lhinvdo/{salesinvoice}', 'SalesInvoiceController@lhinvdopdf')->name('lhinvdopdf');
-    Route::get('/salesinvoice/do/{salesinvoice}', 'SalesInvoiceController@dopdf')->name('dopdf');
-    Route::get('/salesinvoice/lhdo/{salesinvoice}', 'SalesInvoiceController@lhdopdf')->name('lhdopdf');
-    Route::get('/salesinvoice/note/{salesinvoice}', 'SalesInvoiceController@notepdf')->name('notepdf');
-    Route::post('/salesinvoice/checkcustnote', 'SalesInvoiceController@checkcustnote')->name('salesinvoice.checkcustnote');
-    Route::post('/salesinvoice/savesalesnote', 'SalesInvoiceController@savesalesnote')->name('salesinvoice.savesalesnote');
-    Route::post('/salesinvoice/pdftoprinter', 'SalesInvoiceController@pdftoprinter')->name('salesinvoice.pdftoprinter');
-    Route::post('/salesinvoice/servicesales', 'SalesInvoiceController@servicesales')->name('salesinvoice.servicesales');
-    Route::post('/salesinvoice/cancelsales', 'SalesInvoiceController@cancelsales')->name('salesinvoice.cancelsales');
-    Route::get('/salesinvoice/cancelindex', 'SalesInvoiceController@cancelindex')->name('salesinvoice.cancelindex');
-    Route::post('/salesinvoice/checkcustoutsales', 'SalesInvoiceController@checkcustoutsales')->name('salesinvoice.checkcustoutsales');
-    Route::get('/salesinvoice/lhblank', 'SalesInvoiceController@lhblankpdf')->name('lhblankpdf');
-    Route::post('/salesinvoice/uploadservicefile', 'SalesInvoiceController@uploadservicefile')->name('salesinvoice.uploadservicefile');
+    Route::get('/salesinvoice/invoice/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@invoicepdf')->name('invoicepdf');
+    Route::get('/salesinvoice/lhinvoice/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@lhinvoicepdf')->name('lhinvoicepdf');
+    Route::get('/salesinvoice/lhinvdo/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@lhinvdopdf')->name('lhinvdopdf');
+    Route::get('/salesinvoice/do/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@dopdf')->name('dopdf');
+    Route::get('/salesinvoice/lhdo/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@lhdopdf')->name('lhdopdf');
+    Route::get('/salesinvoice/note/{salesinvoice}', 'App\Http\Controllers\SalesInvoicesController@notepdf')->name('notepdf');
+    Route::post('/salesinvoice/checkcustnote', 'App\Http\Controllers\SalesInvoicesController@checkcustnote')->name('salesinvoice.checkcustnote');
+    Route::post('/salesinvoice/savesalesnote', 'App\Http\Controllers\SalesInvoicesController@savesalesnote')->name('salesinvoice.savesalesnote');
+    Route::post('/salesinvoice/pdftoprinter', 'App\Http\Controllers\SalesInvoicesController@pdftoprinter')->name('salesinvoice.pdftoprinter');
+    Route::post('/salesinvoice/servicesales', 'App\Http\Controllers\SalesInvoicesController@servicesales')->name('salesinvoice.servicesales');
+    Route::post('/salesinvoice/cancelsales', 'App\Http\Controllers\SalesInvoicesController@cancelsales')->name('salesinvoice.cancelsales');
+    Route::get('/salesinvoice/cancelindex', 'App\Http\Controllers\SalesInvoicesController@cancelindex')->name('salesinvoice.cancelindex');
+    Route::post('/salesinvoice/checkcustoutsales', 'App\Http\Controllers\SalesInvoicesController@checkcustoutsales')->name('salesinvoice.checkcustoutsales');
+    Route::get('/salesinvoice/lhblank', 'App\Http\Controllers\SalesInvoicesController@lhblankpdf')->name('lhblankpdf');
+    Route::post('/salesinvoice/uploadservicefile', 'App\Http\Controllers\SalesInvoicesController@uploadservicefile')->name('salesinvoice.uploadservicefile');
 
 
     # RECEIVE PAYMENT

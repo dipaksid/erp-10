@@ -48,7 +48,7 @@
                             <td>{{ $rstaff->name }}</td>
                             <td>{{ $rstaff->commrate }}</td>
                             <td class="text-center col-2">
-                                <div class="row">
+                                <div class="d-flex">
                                     @can('VIEW STAFF')
                                         <a href="{{ action('App\Http\Controllers\StaffsController@show', $rstaff->id)}}"  class="btn btn-primary ">View</a>&nbsp;
                                     @endcan
