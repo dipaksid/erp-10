@@ -38,7 +38,11 @@
             </li>
         @endcan
         <li class="nav-item dropdown no-arrow">
-            <div style="padding:15px 5px">Login Date <br>{{ ((isset($request))?$request->session()->get('login_date'):((isset($exception))?$exception->getMessage():"")) }}</div>
+            <div style="padding: 15px 5px">
+                Login Date <br>
+                {{ ((isset($request)) ? \Carbon\Carbon::parse($request->session()->get('login_date'))->format('d/m/Y') : ((isset($exception)) ? $exception->getMessage() : "")) }}
+            </div>
+
         </li>
 
         <div class="topbar-divider d-none d-sm-block"></div>

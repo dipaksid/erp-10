@@ -109,6 +109,10 @@ class AdminMiddleware
                     $classname = "App\\Models\\LeaveForm";
                     $method = "getModule";
                     break;
+                case 'evaluation-form':
+                    $classname = "App\\Models\\EvaluationForm";
+                    $method = "getModule";
+                    break;
                 default:
                     $classname = "App\\Models\\" . ucfirst($singularSegment);
                     $method = "getModule";

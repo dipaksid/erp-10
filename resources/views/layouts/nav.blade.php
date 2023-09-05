@@ -249,7 +249,7 @@
                 @can('SERVICES RATE PROFILE LIST') <a class="collapse-item" href="{{ route('servicesrate.index') }}">Services Rate Profile</a> @elsecan('ADD SERVICES RATE PROFILE') <a class="collapse-item" href="{{ route('servicesrate.create') }}">Services Rate Profile</a> @endcan
                 @can('SOLUTION PROFILE LIST') <a class="collapse-item" href="{{ route('solutionprofile.index') }}">Solution Profile</a> @elsecan('ADD SOLUTION PROFILE') <a class="collapse-item" href="{{ route('solutionprofile.create') }}">Solution Profile</a> @endcan
                 @can('TRAINING FORM LIST')<a class="collapse-item" href="{{ route('trainingform.index') }}">Training Form</a>@endcan
-                @can('EVALUATION FORM LIST')<a class="collapse-item" href="{{ route('evaluationform.index') }}">Evaluation Form</a>@endcan
+                @can('EVALUATION FORM LIST')<a class="collapse-item" href="{{ route('evaluation-forms.index') }}">Evaluation Form</a>@endcan
             </div>
         </div>
     </li>

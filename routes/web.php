@@ -19,6 +19,42 @@ Route::get('/', function () {
 });
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('softwaresrvupload','SoftwareServiceController@softwaresrvupload');
+//Route::post('login','Auth\LoginController@authUserPass');
+Route::get('/uom/stocklist', 'UOMController@stocklist')->name('uom.stocklist');
+Route::get('/softwareservice/getsolutioninfo', 'SoftwareServiceController@getsolutioninfo')->name('softwareservice.getsolutioninfo');
+Route::get('/softwareservice/solutionprofilelist', 'SoftwareServiceController@solutionprofilelist')->name('softwareservice.solutionprofilelist');
+Route::get('/softwareservice/getuserlist', 'SoftwareServiceController@getuserlist');
+Route::get('/softwareservice/getsolution', 'SoftwareServiceController@getsolution')->name('softwareservice.getsolution');
+Route::get('/softwareservice/customerlist/{id}', 'SoftwareServiceController@customerlist')->name('softwareservice.customerlist');
+Route::get('/softwareservice/servicesales','SoftwareServiceController@servicesales')->name('softwareservice.servicesales');
+Route::get('/softwareservice/getjobno','SoftwareServiceController@getjobno')->name('softwareservice.getjobno');
+Route::get('/softwareservice/checkprob','SoftwareServiceController@checkprob')->name('softwareservice.checkprob');
+Route::get('home/getsoftwareservice','HomeController@getsoftwareservice');
+Route::get('softwareservice/getsoftwareservice','SoftwareServiceController@getsoftwareservice');
+Route::get('home/softwareservice','SoftwareServiceController@get_outstanding_notification');
+Route::get('softwareservice','SoftwareServiceController@get_outstanding_notification');
+Route::post('/softwareservice/savesignature','SoftwareServiceController@savesignature')->name('softwareservice.savesignature');
+Route::post('/serviceform/savesignature','ServiceFormController@savesignature')->name('serviceform.savesignature');
+Route::get('/softwareservice/swreport/{id}','SoftwareServiceController@swreport');
+Route::get('/report/filemanageinitfile', 'ReportFileManageController@initfile')->name('report.filemanageinitfile');
+Route::get('check_user_auth','SoftwareServiceController@checkuserDetail');
+Route::get('checkduplicate_problem','SolutionProfileController@checksimilarproblem');
+Route::get('/trainingform/sort/{id}','TrainingFormController@sort');
+Route::get("/salesinvoice/serviceinvoice",'SalesInvoiceController@serviceinvoice');
+Route::get('/softwareservice/trainingformlist', 'SoftwareServiceController@trainingformList');
+Route::get('check_cust','ServiceFormController@check_cust');
+Route::get('/trainingform/trainingformpdf/{id}/trainingform','TrainingFormController@trainingformpdf');
+Route::get('/softwareservice/softwareservice/{id}/trainingform','SoftwareServiceController@trainingformpdf');
+Route::get('/softwareservice/check_trainingform_status','SoftwareServiceController@check_trainingform_status');
+Route::get('/softwareservice/stockloanList','SoftwareServiceController@stockloanList');
+Route::get('/softwareservice/problemhistory','SoftwareServiceController@problemhistory');
+Route::get('/get_servicerate','SoftwareServiceController@get_servicerate');
+Route::get('/evaluation-forms/evaluationformpdf/{id}/evaluation-forms','App\Http\Controllers\EvaluationFormsController@evaluationformpdf');
+Route::get('/evaluation-forms/evaluationformlist', 'App\Http\Controllers\EvaluationFormsController@evaluationformList');
+Route::get('/leaveform/leaveformpdf/{id}/leaveform','LeaveFormController@leaveformpdf');
+Route::get('/leaveform/docdelete', 'LeaveFormController@docdelete')->name('leaveform.docdelete');
+//Route::get('/purchaseorder/sendmail/{id}','PurchaseOrderController@sendmail');
 //Existing routes
 Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
 {
@@ -72,8 +108,8 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::get('/trainingform/trainingformlist', 'TrainingFormController@trainingformList')->name('trainingform.trainingformlist');
     Route::post('/trainingform/{id}', 'TrainingFormController@update')->name('trainingform.update');
     Route::resource('trainingform','TrainingFormController');
-    Route::post('/evaluationform/{id}', 'EvaluationFormController@update')->name('evaluationform.update');
-    Route::resource('evaluationform','EvaluationFormController');
+    Route::post('/evaluation-forms/{id}', 'App\Http\Controllers\EvaluationFormsController@update')->name('evaluationform.update');
+    Route::resource('evaluation-forms',App\Http\Controllers\EvaluationFormsController::class);
     Route::post('/leaveform/{id}', 'App\Http\Controllers\LeaveFormsController@update')->name('leaveform.update');
     Route::resource('leaveform',App\Http\Controllers\LeaveFormsController::class);
     Route::get('/leaveformpdf/{id}', 'App\Http\Controllers\LeaveFormsController@leaveformpdf');
