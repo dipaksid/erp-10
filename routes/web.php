@@ -100,7 +100,7 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::resource('system_settings', App\Http\Controllers\SystemSettingsController::class);
     Route::resource('company_settings', App\Http\Controllers\CompanySettingsController::class);
     Route::resource('services_rates',App\Http\Controllers\ServiceRatesController::class);
-    Route::resource('solutionprofile','SolutionProfileController');
+    Route::resource('solutionprofile',App\Http\Controllers\SolutionProfilesController::class);
     Route::resource('softwareservice','SoftwareServiceController');
     Route::post('/trainingform/updseq', 'TrainingFormController@updseq')->name('trainingform.updseq');
     Route::post('/trainingform/updseq2', 'TrainingFormController@updseq2')->name('trainingform.updseq2');

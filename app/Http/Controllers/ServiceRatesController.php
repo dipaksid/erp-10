@@ -105,9 +105,7 @@ class ServiceRatesController extends Controller
     {
         $descriptions = $request->input('d_description', []);
         $rates = $request->input('d_rate', []);
-
         $rateData = [];
-
         foreach ($descriptions as $key => $description) {
             $rate = $rates[$key] ?? null;
 
@@ -118,13 +116,11 @@ class ServiceRatesController extends Controller
                 ];
             }
         }
-
         $data = [
             'description' => json_encode($rateData),
             'effectivedate' => Carbon::createFromFormat('d/m/Y', $request->input('effectivedate'))->format('Y-m-d'),
             'rate' => null, // You can adjust this as needed.
         ];
-
         $services_rate->update($data);
 
         return redirect('/services_rates')->with('success', 'Service Rate Profile has been updated!!');
