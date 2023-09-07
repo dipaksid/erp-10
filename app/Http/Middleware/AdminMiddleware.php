@@ -117,6 +117,10 @@ class AdminMiddleware
                     $classname = "App\\Models\\ServiceRate";
                     $method = "getModule";
                     break;
+                case 'solutionprofile':
+                    $classname = "App\\Models\\SolutionProfile";
+                    $method = "getModule";
+                    break;
                 default:
                     $classname = "App\\Models\\" . ucfirst($singularSegment);
                     $method = "getModule";

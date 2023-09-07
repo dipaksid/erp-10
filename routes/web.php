@@ -39,7 +39,7 @@ Route::post('/serviceform/savesignature','ServiceFormController@savesignature')-
 Route::get('/softwareservice/swreport/{id}','SoftwareServiceController@swreport');
 Route::get('/report/filemanageinitfile', 'ReportFileManageController@initfile')->name('report.filemanageinitfile');
 Route::get('check_user_auth','SoftwareServiceController@checkuserDetail');
-Route::get('checkduplicate_problem','SolutionProfileController@checksimilarproblem');
+Route::get('checkduplicate_problem','App\Http\Controllers\SolutionProfilesController@checksimilarproblem');
 Route::get('/trainingform/sort/{id}','TrainingFormController@sort');
 Route::get("/salesinvoice/serviceinvoice",'SalesInvoiceController@serviceinvoice');
 Route::get('/softwareservice/trainingformlist', 'SoftwareServiceController@trainingformList');
