@@ -67,15 +67,19 @@
                                     @endcan
 
                                     @can('DELETE EVALUATION FORM')
-                                        <form action="{{action('App\Http\Controllers\EvaluationFormsController@destroy', $rrow->id)}}" method="post">
+                                        <form action="{{action('App\Http\Controllers\EvaluationFormsController@destroy', $rrow->id)}}" method="post" id="deleteForm_{{ $rrow->id }}">
                                             @csrf
                                             @method('DELETE')
 
-                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                            <button class="btn btn-danger" type="submit" onclick="showConfirmDeleteModal(event, {{ $rrow->id }})">
+                                                Delete
+                                            </button>
                                         </form>
                                     @endcan
                                     &nbsp;
-                                    <a target="_blank"  href="{{action('App\Http\Controllers\EvaluationFormsController@evaluationformpdf',$rrow->id)}}"  class="btn btn-success ">PDF</a>
+                                    <a target="_blank" href="{{ action('App\Http\Controllers\EvaluationFormsController@evaluationformpdf',$rrow->id) }}"  class="btn btn-success">
+                                        PDF
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -88,5 +92,10 @@
                 </tbody>
             </table>
         </div>
+        @include('partials/delete-confirm', ['title' => 'EVALUATION FORM'])
     </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/common.js') }}"></script>
 @endsection

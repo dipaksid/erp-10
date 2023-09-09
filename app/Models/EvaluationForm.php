@@ -9,6 +9,8 @@ class EvaluationForm extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function evaluationDetails()
     {
         return $this->hasMany(EvaluationDetail::class, 'evaluation_id')->orderBy('seq', 'ASC');

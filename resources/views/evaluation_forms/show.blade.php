@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <div>
+        <div class="container">
             <!-- Page Heading Start -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800">Evaluation Form</h1>
@@ -22,7 +22,7 @@
                 <div class="row form-group">
                     <div class="col-6">
                         <label for="title">Title:</label>
-                        <input type="text" class="form-control enterseq" seq="2" name="form_title" disabled value="{{$evaluationform->form_title}}" id="form_title">
+                        <input type="text" class="form-control enterseq" seq="2" name="form_title" disabled value="{{$evaluation_form->form_title}}" id="form_title">
                         <input type="hidden" class="form-control col-10" name="seq_field" id="seq_field" value="0">
                     </div>
                 </div>
@@ -30,14 +30,14 @@
                     <div class="col-3">
                         <label for="title">Status:</label>
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="status" disabled name="status" {{(($evaluationform->status=='1')?"checked":"")}}>
+                            <input type="checkbox" class="custom-control-input" id="status" disabled name="status" {{(($evaluation_form->status=='1')?"checked":"")}}>
                             <label class="custom-control-label" for="status"></label>
                         </div>
                     </div>
                 </div>
                 <table class="table">
                     <thead class="thead-light">
-                    <tr class="row">
+                    <tr class="d-flex">
                         <th class="col-sm-3">Subject</th>
                         <th class="col-sm-7">Description</th>
                         <th class="col-sm-1">Max Rating</th>
@@ -160,7 +160,7 @@
     <script src="{{ asset('js/base.js') }}"></script>
     <script type="text/javascript">
         var $j = jQuery.noConflict();
-        var id = "{{$evaluationform->id}}";
+        var id = "{{ $evaluation_form->id }}";
 
         var bsavenote=false;
         var bsave=false;
@@ -284,7 +284,7 @@
             var main_seq = parseInt(document.getElementById("seq_field").value);
             data2="id="+id;
             $j.ajax({
-                url:"{{action('TrainingFormController@trainingformList')}}",
+                url:"{{action('App\Http\Controllers\TrainingFormsController@trainingformList')}}",
                 type:'get',
                 dataType: 'json',
                 data:data2,
@@ -871,7 +871,7 @@
 
 @endsection
 
-@section('csscontrol')
+@section('styles')
 
     <style type="text/css">
         .dropdown-menu
