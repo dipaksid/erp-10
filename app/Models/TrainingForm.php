@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\TrainingFormDetail;
+use App\Models\TrainingFormDetailExtra;
 use Carbon\Carbon;
 
 class TrainingForm extends Model
@@ -14,6 +16,23 @@ class TrainingForm extends Model
     protected $table = 'training_forms';
 
     protected $fillable = ['id','systemcod','form_title'];
+
+
+    public function trainingDetails()
+    {
+        return $this->hasMany(TrainingFormDetail::class, 'trainingid');
+    }
+
+    // Define the relationship to TrainingFormDetailExtra
+    public function trainingDetailExtras()
+    {
+        return $this->hasManyThrough(
+            TrainingFormDetailExtra::class,
+            TrainingFormDetail::class,
+            'trainingid',
+            'detail_id'
+        );
+    }
 
     public function saveTrainingForm($data)
     {
@@ -34,7 +53,7 @@ class TrainingForm extends Model
 
     public static function trainingformtablelist(){
         return DB::table('training_forms')
-            ->join('customer_categories', 'training_forms.systemcod', '=', 'customer_categories.categorycode');
+                    ->join('customer_categories', 'training_forms.systemcod', '=', 'customer_categories.categorycode');
     }
 
     public static function trainingformdetaillist(){
@@ -64,4 +83,42 @@ class TrainingForm extends Model
         }
         return $result;
     }
+
+    public function scopeSearchBySystemcodOrTitle($query, $searchValue)
+    {
+        return $query->select('training_forms.id', 'training_forms.systemcod', 'training_forms.form_title', 'customer_categories.description')
+            ->join('customer_categories', 'training_forms.systemcod', '=', 'customer_categories.categorycode')
+            ->where(function ($subQuery) use ($searchValue) {
+                if ($searchValue) {
+                    $subQuery->where('training_forms.systemcod', 'like', '%' . $searchValue . '%')
+                        ->orWhere('training_forms.form_title', 'like', '%' . $searchValue . '%');
+                }
+            });
+    }
+
+    public function updateOrInsertTrainingDetail($detailId, $data)
+    {
+        if ($detailId != 0) {
+            $trainingDetail = TrainingFormDetail::find($detailId);
+            $trainingDetail->update($data);
+        } else {
+            $trainingDetail = TrainingFormDetail::create($data);
+        }
+
+        return $trainingDetail;
+    }
+
+    public function updateOrInsertTrainingDetailExtra($extraId, $data)
+    {
+        if ($extraId != 0) {
+            $trainingDetailExtra = TrainingFormDetailExtra::find($extraId);
+            $trainingDetailExtra->update($data);
+        } else {
+            $trainingDetailExtra = TrainingFormDetailExtra::create($data);
+        }
+
+        return $trainingDetailExtra;
+    }
+
+
 }

@@ -40,7 +40,7 @@
                             <option value=""> -- Selection --</option>
                             @foreach($data['customercategory'] as $ckey => $rowcat)
                                 <option
-                                    {{(($trainingForm->systemcod == $rowcat['categorycode'])?"selected":"")}} value="{{$rowcat['categorycode']}}">
+                                    {{(($trainingform->systemcod == $rowcat['categorycode'])?"selected":"")}} value="{{$rowcat['categorycode']}}">
                                     {{$rowcat['categorycode']}} - {{$rowcat['description']}}
                                 </option>
                             @endforeach
@@ -52,7 +52,7 @@
                     <div class="col-3">
                         <label for="title">Title:</label>
                         <input type="text" class="form-control enterseq" readonly seq="2" name="form_title"
-                               value="{{$trainingForm->form_title}}" id="form_title">
+                               value="{{$trainingform->form_title}}" id="form_title">
                     </div>
                 </div>
 
@@ -154,7 +154,7 @@
             integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
     <script type="text/javascript">
         var $j = jQuery.noConflict();
-        var id = "{{ $trainingForm->id }}";
+        var id = "{{ $trainingform->id }}";
         var fixHelperModified = function (e, tr) {
                 var $originals = tr.children();
                 var $helper = tr.clone();

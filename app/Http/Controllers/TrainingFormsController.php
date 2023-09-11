@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Http\Requests\TrainingFormRequest;
+use App\Http\Requests\UpdateTrainingFormRequest;
 use App\Models\TrainingForm;
 use App\Models\TrainingFormDetail;
 use App\Models\TrainingFormDetailExtra;
@@ -29,13 +28,18 @@ use App\Models\User;
 use App\Models\Supplier;
 use App\Bwlibs\FileDocManage;
 use App\Bwlibs\Printfile;
-use PDF;
-use LynX39\LaraPdfMerger\Facades\PdfMerger;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use LynX39\LaraPdfMerger\Facades\PdfMerger;
 use File;
 use Storage;
+
 class TrainingFormsController extends Controller
 {
+    const  ITEM_PER_PAGES = 15;
     /**
      * Display a listing of the resource.
      *
@@ -43,17 +47,11 @@ class TrainingFormsController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('searchvalue')){
-            $training = TrainingForm::trainingformtablelist()->select('training_forms.id','training_forms.systemcod','training_forms.form_title','customer_categories.description')->where('training_forms.systemcod','like','%'.$request->input('searchvalue').'%')->orwhere('training_forms.form_title','like','%'.$request->input('searchvalue').'%')
-                ->paginate(15);
-            $training->withPath('?searchvalue='.(($request->has('searchvalue'))?$request->input('searchvalue'):"") );
-        } else {
-            $training = TrainingForm::trainingformtablelist()->select('training_forms.id','training_forms.systemcod','training_forms.form_title','customer_categories.description')->paginate(15);
-        }
-        $gettrain = TrainingForm::get();
+        $searchValue = $request->input('searchvalue');
+        $training = TrainingForm::searchBySystemcodOrTitle($searchValue)->paginate(self::ITEM_PER_PAGES);
+        $training->appends(['searchvalue' => $searchValue]);
 
-        $input=$request->all();
-        return view('trainingform.index',compact('training','input'));
+        return view('trainingform.index', compact('training', 'searchValue'));
     }
 
     /**
@@ -63,9 +61,8 @@ class TrainingFormsController extends Controller
      */
     public function create(Request $request)
     {
-        $data = array();
         $data['customercategory'] = CustomerCategory::where('stockcatgid',1)->get();
-        //
+
         return view('trainingform.create',compact('data'));
     }
 
@@ -75,222 +72,232 @@ class TrainingFormsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TrainingFormRequest $request)
     {
-        $trainingform = new TrainingForm();
-        $data = $this->validate($request, [
-            'systemcod'=>'required|unique:trainingform',
+        $data = $request->validated();
+
+        $trainingForm = TrainingForm::create([
+            'systemcod' => $data['systemcod'],
+            'form_title' => $request->input('form_title'),
         ]);
-        $data['systemcod'] = $request['systemcod'];
-        $data['form_title'] = $request['form_title'];
-        $trainingform->saveTrainingForm($data);
+        $trainingFormId = $trainingForm->id;
 
-        $training_form_id = $trainingform->id;
-        if(isset($request['d_description'])){
-            foreach($request['d_description'] as $key => $par){
+        if ($request->has('d_description')) {
+            foreach ($request->input('d_description') as $key => $par) {
+                $trainingDetail = new TrainingFormDetail();
+                $data2 = [
+                    'trainingid' => $trainingFormId,
+                    'no' => $request->input('no')[$key],
+                    'particular' => $par,
+                    'special' => $request->input('d_specialfield')[$key],
+                    'space_lvl' => $request->input('d_spacefield')[$key],
+                    'input_flag' => $request->input('d_input_flag')[$key],
+                ];
+                $getMax = TrainingForm::trainingformdetaillist()->select('training_form_details.seq')->where('training_form_details.trainingid', $trainingFormId)->orderBy('training_form_details.seq', 'DESC')->first();
+                $getSeq = $getMax ? $getMax->seq + 1 : 1;
+                $data2['seq'] = $getSeq;
+                $trainingDetail->saveTrainingFormDetail($data2);
+                $detailId = $trainingDetail->id;
 
-                $training_detail = new TrainingFormDetail();
-                $data2['trainingid'] = $training_form_id;
-                $data2['no'] = $request['no'][$key];
-                $data2['particular'] = $par;
-                $data2['special'] = $request['d_specialfield'][$key];
-                $data2['space_lvl'] = $request['d_spacefield'][$key];
-                $data2['input_flag'] = $request['d_input_flag'][$key];
-                $getmax = TrainingForm::trainingformdetaillist()->select('training_form_details.seq')->where('training_form_details.trainingid',$training_form_id)->orderBy('training_form_details.seq',"DESC")->first();
-                if($getmax){
-                    $getseq = $getmax->seq + 1;
-                } else {
-                    $getseq = 1;
-                }
-                $data2['seq'] = $getseq;
-                $training_detail->saveTrainingFormDetail($data2);
-                $detail_id = $training_detail->id;
-                if(!empty($request['d_description_detail'][$key])){
-                    foreach($request['d_description_detail'][$key] as $dkey => $detail){
-                        $training_detail_extra = new TrainingFormDetailExtra();
-                        $data3['detail_id'] = $detail_id;
-                        $data3['particular'] = $detail;
-                        $data3['special'] = $request['d_special_field_details'][$key][$dkey];
-                        $data3['space_lvl'] = $request['d_space_field_details'][$key][$dkey];
-                        $data3['input_flag'] = $request['d_input_flags'][$key][$dkey];
-                        $getmax2 = TrainingFormDetailExtra::where('trainingdetail_extra.detail_id',$detail_id)->orderBy('trainingdetail_extra.seq',"DESC")->first();
-                        if($getmax2){
-                            $getseq2 = $getmax2->seq + 1;
-                        } else {
-                            $getseq2 = 1;
-                        }
-                        $data3['seq'] = $getseq2;
-                        $training_detail_extra->saveTrainingDetailExtra($data3);
+                if (!empty($request->input('d_description_detail')[$key])) {
+                    foreach ($request->input('d_description_detail')[$key] as $dKey => $detail) {
+                        $trainingDetailExtra = new TrainingFormDetailExtra();
+                        $data3 = [
+                            'detail_id' => $detailId,
+                            'particular' => $detail,
+                            'special' => $request->input('d_special_field_details')[$key][$dKey],
+                            'space_lvl' => $request->input('d_space_field_details')[$key][$dKey],
+                            'input_flag' => $request->input('d_input_flags')[$key][$dKey],
+                        ];
+                        $getMax2 = TrainingFormDetailExtra::where('trainingdetail_extra.detail_id', $detailId)->orderBy('trainingdetail_extra.seq', 'DESC')->first();
+                        $getSeq2 = $getMax2 ? $getMax2->seq + 1 : 1;
+                        $data3['seq'] = $getSeq2;
+                        $trainingDetailExtra->saveTrainingDetailExtra($data3);
                     }
                 }
             }
         }
-        return redirect('/trainingform')->with('success', 'New Training form for system ('.$request['systemcod'].') has been created!');
+
+        return redirect('/trainingform')->with('success', 'New Training form for system ('.$data['systemcod'].') has been created!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\TrainingForm  $trainingForm
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request,$id)
+    public function show(TrainingForm $trainingform)
     {
-        $trainingform = TrainingForm::find($id);
-        $training_id = $trainingform->id;
-        $data['customercategory'] = CustomerCategory::where('stockcatgid',1)->get();
-        $trainingdetail = TrainingForm::trainingformdetaillist()->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq','training_form_details.input_flag')->where('training_form_details.trainingid',$training_id)->orderBy("training_form_details.seq","ASC")->get();
-        $detailextra = TrainingForm::trainingdetailextralist()->select('trainingdetail_extra.id','trainingdetail_extra.detail_id','trainingdetail_extra.particular','trainingdetail_extra.special','trainingdetail_extra.space_lvl','trainingdetail_extra.seq','trainingdetail_extra.input_flag')->where('training_form_details.trainingid',$training_id)->orderBy("trainingdetail_extra.seq","ASC")->get();
-        return view('trainingform.show', compact('trainingform','trainingdetail','data','detailextra'));
+        $data['customercategory'] = CustomerCategory::where('stockcatgid', 1)->get();
+
+        $trainingdetail = $trainingform->trainingDetails()
+            ->select('id', 'trainingid', 'no', 'particular', 'special', 'space_lvl', 'seq', 'input_flag')
+            ->orderBy("seq", "ASC")
+            ->get();
+
+        $detailextra = $trainingform->trainingDetailExtras()
+            ->select('training_detail_extras.id', 'training_detail_extras.detail_id', 'training_detail_extras.particular', 'training_detail_extras.special', 'training_detail_extras.space_lvl', 'training_detail_extras.seq', 'training_detail_extras.input_flag')
+            ->orderBy("training_detail_extras.seq", "ASC")
+            ->get();
+
+        return view('trainingform.show', compact('trainingform', 'trainingdetail', 'data', 'detailextra'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  App\Models\TrainingForm $trainingform
+     * @return \Illuminate\Contracts\View\View
      */
-    public function edit(Request $request,$id)
+    public function edit(TrainingForm $trainingform)
     {
-        $trainingform = TrainingForm::find($id);
-        $training_id = $trainingform->id;
-        $data['customercategory'] = CustomerCategory::where('stockcatgid',1)->get();
-        $trainingdetail = TrainingForm::trainingformdetaillist()->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq','training_form_details.input_flag')->where('training_form_details.trainingid',$training_id)->orderBy("training_form_details.seq","ASC")->get();
-        $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras	.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq','training_detail_extras	.input_flag')->where('training_form_details.trainingid',$training_id)->orderBy("training_detail_extras	.seq","ASC")->get();
-        return view('trainingform.edit', compact('trainingform','trainingdetail','data','detailextra','id'));
+        $data['customercategory'] = CustomerCategory::where('stockcatgid', 1)->get();
+        $trainingdetail = $trainingform
+            ->trainingformdetaillist()
+            ->select('training_form_details.id', 'training_form_details.trainingid', 'training_form_details.no', 'training_form_details.particular', 'training_form_details.special', 'training_form_details.space_lvl', 'training_form_details.seq', 'training_form_details.input_flag')
+            ->orderBy("training_form_details.seq", "ASC")
+            ->get();
+
+        $detailextra = $trainingform
+            ->trainingdetailextralist()
+            ->select('training_detail_extras.id', 'training_detail_extras.detail_id', 'training_detail_extras.particular', 'training_detail_extras.special', 'training_detail_extras.space_lvl', 'training_detail_extras.seq', 'training_detail_extras.input_flag')
+            ->orderBy("training_detail_extras.seq", "ASC")
+            ->get();
+
+        return view('trainingform.edit', compact('trainingform', 'trainingdetail', 'data', 'detailextra'));
     }
 
-    public function sort(Request $request,$id)
+
+    /**
+     * Show the form for sorted the specified resource.
+     *
+     * @param Request $request
+     * @param  App\Models\TrainingForm $trainingform
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function sort(Request $request, TrainingForm $trainingform)
     {
-        $trainingform = TrainingForm::find($id);
         $training_id = $trainingform->id;
 
         $data['customercategory'] = CustomerCategory::where('stockcatgid',1)->get();
-        $trainingdetail = TrainingForm::trainingformdetaillist()->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq')->where('training_form_details.trainingid',$training_id)->orderBy("training_form_details.seq","ASC")->get();
-        $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq')->where('training_form_details.trainingid',$training_id)->get();
-        return view('trainingform.sort', compact('trainingform','trainingdetail','data','detailextra','id'));
+        $trainingdetail = TrainingForm::trainingformdetaillist()
+                        ->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq')
+                        ->where('training_form_details.trainingid',$training_id)
+                        ->orderBy("training_form_details.seq","ASC")->get();
+
+        $detailextra = TrainingForm::trainingdetailextralist()
+                    ->select('training_detail_extras.id','training_detail_extras.detail_id','training_detail_extras.particular','training_detail_extras.special','training_detail_extras.space_lvl','training_detail_extras.seq')
+                    ->where('training_form_details.trainingid',$training_id)->get();
+
+        return view('trainingform.sort', compact('trainingform','trainingdetail','data','detailextra'));
     }
+
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\UpdateTrainingFormRequest $request
+     * @param App\Models\TrainingForm $trainingform
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateTrainingFormRequest $request, TrainingForm $trainingform)
     {
-        $data = $this->validate($request, [
-            'systemcod'=>'required|unique:trainingform,systemcod,'.$id.''
-        ]);
-        $trainingform = TrainingForm::find($id);
+        $data = $request->validated();
 
-        $data['id'] = $id;
-        $data['systemcod'] = $request['systemcod'];
-        $data['form_title'] = $request['form_title'];
+        $data['id'] = $trainingform->id;
+        $data['systemcod'] = $request->input('systemcod');
+        $data['form_title'] = $request->input('form_title');
+
         $trainingform->updateTrainingForm($data);
-        $training_form_id = $id;
+        $training_form_id = $trainingform->id;
 
-        $details = array();
-        $details2 = array();
-        foreach($request['d_id'] as $ikey => $pid){
-            if($pid != 0){
-                $details[] = $pid;
+        $details = $request->input('d_id');
+        $details2 = [];
 
-                if(isset($request['d_detail_id'][$ikey]) && !empty($request['d_detail_id'][$ikey])){
-                    foreach($request['d_detail_id'][$ikey] as $ikey2 => $pid2){
-                        if($pid2 != 0){
-                            $details2[] = $pid2;
-
-                        }
-                    }
-
-                }
+        foreach ($details as $ikey => $pid) {
+            if ($pid != 0) {
+                $details2 = array_merge($details2, $request->input("d_detail_id.$ikey", []));
             }
         }
-        $check = TrainingFormDetail::where('trainingid',$training_form_id)->whereNotIn('id', $details)->delete();
 
+        TrainingFormDetail::where('trainingid', $training_form_id)->whereNotIn('id', $details)->delete();
 
-
-        if(isset($details2) && !empty($details2)){
-            $check2 = TrainingFormDetailExtra::trainingdetaillist()->select('training_detail_extras	.id')->where('trainingformdetail.trainingid',$training_form_id)->whereNotIn('training_detail_extras	.id',$details2)->delete();
+        if (!empty($details2)) {
+            TrainingFormDetailExtra::trainingdetaillist()
+                ->where('trainingformdetail.trainingid', $training_form_id)
+                ->whereNotIn('trainingdetail_extra.id', $details2)
+                ->delete();
         }
 
-        $seq =0;
-        foreach($request['d_description'] as $key => $par){
+        $seq = 0;
+
+        foreach ($request->input('d_description') as $key => $par) {
             $seq++;
-            $detailid = $request['d_id'][$key];
-            $special_main = (isset($request["d_specialfields"][$key]))?"1":"0";
-            $space_main = (isset($request["d_spacefields"][$key]))?"1":"0";
-            $input_main = (isset($request["d_input_flags"][$key]))?"1":"0";
-            $data2['id'] = $detailid;
-            $data2['trainingid'] = $training_form_id;
-            $data2['no'] = $request['no'][$key];
-            $data2['particular'] = $par;
-            $data2['special'] = $special_main;
-            $data2['space_lvl'] = $space_main;
-            $data2['seq'] = $seq;
-            $data2['input_flag'] = $input_main;
-            if($detailid != 0){
-                $training_detail = TrainingFormDetail::where('id',$detailid)->first();
-                $training_detail->updateTrainingFormDetail($data2);
-                $detail_id = $training_detail->id;
-            } else {
-                $training_detail = new TrainingFormDetail();
-                $training_detail->saveTrainingFormDetail($data2);
-                $detail_id = $training_detail->id;
-            }
+            $detailid = $request->input("d_id.$key");
+            $special_main = $request->boolean("d_specialfields.$key") ? "1" : "0";
+            $space_main = $request->boolean("d_spacefields.$key") ? "1" : "0";
+            $input_main = $request->boolean("d_input_flags.$key") ? "1" : "0";
 
-            $subseq=0;
-            if(!empty($request['d_description_detail'][$key])){
-                foreach($request['d_description_detail'][$key] as $dkey => $detail){
+            $data2 = [
+                'id' => $detailid,
+                'trainingid' => $training_form_id,
+                'no' => $request->input("no.$key"),
+                'particular' => $par,
+                'special' => $special_main,
+                'space_lvl' => $space_main,
+                'seq' => $seq,
+                'input_flag' => $input_main,
+            ];
+
+            $training_detail = $trainingform->updateOrInsertTrainingDetail($detailid, $data2);
+            $detail_id = $training_detail->id;
+
+            $subseq = 0;
+
+            if (!empty($request->input("d_description_detail.$key"))) {
+                foreach ($request->input("d_description_detail.$key") as $dkey => $detail) {
                     $subseq++;
-                    $special_sub = (isset($request["d_detail_specialfield"][$key][$dkey]))?"1":"0";
-                    $space_sub = (isset($request["d_detail_spacefield"][$key][$dkey]))?"1":"0";
-                    $input_sub = (isset($request["d_detail_input_flags"][$key][$dkey]))?"1":"0";
-                    $extraid = $request['d_detail_id'][$key][$dkey];
-                    $data3['detail_id'] = $detail_id;
-                    $data3['id'] = $extraid;
-                    $data3['particular'] = $detail;
-                    $data3['special'] = $special_sub;
-                    $data3['space_lvl'] = $space_sub;
-                    $data3['seq'] = $subseq;
-                    $data3['input_flag'] = $input_sub;
-                    if($extraid != 0){
-                        $training_detail_extra = TrainingFormDetailExtra::where('id',$extraid)->first();
-                        $training_detail_extra->updateTrainingDetailExtra($data3);
-                    } else {
-                        $training_detail_extra = new TrainingFormDetailExtra();
-                        $training_detail_extra->saveTrainingDetailExtra($data3);
-                    }
+                    $special_sub = $request->boolean("d_detail_specialfield.$key.$dkey") ? "1" : "0";
+                    $space_sub = $request->boolean("d_detail_spacefield.$key.$dkey") ? "1" : "0";
+                    $input_sub = $request->boolean("d_detail_input_flags.$key.$dkey") ? "1" : "0";
+                    $extraid = $request->input("d_detail_id.$key.$dkey");
 
+                    $data3 = [
+                        'detail_id' => $detail_id,
+                        'id' => $extraid,
+                        'particular' => $detail,
+                        'special' => $special_sub,
+                        'space_lvl' => $space_sub,
+                        'seq' => $subseq,
+                        'input_flag' => $input_sub,
+                    ];
+
+                    $training_detail_extra = $trainingform->updateOrInsertTrainingDetailExtra($extraid, $data3);
                 }
             }
         }
-        return redirect('/trainingform')->with('success', 'Training form for system ('.$trainingform->systemcod.') has been updated!');
+
+        return redirect('/trainingform')->with('success', 'Training form for system (' . $trainingform->systemcod . ') has been updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\TrainingForm $trainingform
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(TrainingForm $trainingform)
     {
-        $trainingform = TrainingForm::find($id);
-
-        $trainingdetailExtra = TrainingFormDetailExtra::trainingdetaillist()->select('training_detail_extras	.id')->where('trainingformdetail.trainingid',$id)->delete();
-        $trainingdetail = TrainingFormDetail::where('trainingid',$id)->delete();
-
         $trainingcode = $trainingform->systemcod;
+        $trainingform->trainingDetails()->delete();
         $trainingform->delete();
 
-        return redirect('/trainingform')->with('success', 'Training form for System ('.$trainingcode.') has been deleted!!');
+        return redirect('/trainingform')->with('success', 'Training form for System (' . $trainingcode . ') has been deleted!');
     }
 
     public function detailList(Request $request){
         $detail_id = $request['id'];
-        $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras	.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq','training_detail_extras	.input_flag')->where('training_detail_extras	.detail_id',$detail_id)->orderBy("seq")->get();
+        $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras.id','training_detail_extras.detail_id','training_detail_extras.particular','training_detail_extras.special','training_detail_extras.space_lvl','training_detail_extras.seq','training_detail_extras.input_flag')->where('training_detail_extras.detail_id',$detail_id)->orderBy("seq")->get();
 
         $arr_return["datalist"] = $detailextra;
         $arr_return["msg"] = "success";
@@ -299,10 +306,10 @@ class TrainingFormsController extends Controller
     }
     public function trainingformList(Request $request){
         $training_id = $request['id'];
-        $trainingdetailseq = TrainingForm::trainingformdetaillist()->select('trainingformdetail.id','trainingformdetail.trainingid','trainingformdetail.no','trainingformdetail.particular','trainingformdetail.special','trainingformdetail.space_lvl','trainingformdetail.seq','trainingformdetail.input_flag')->where('trainingformdetail.trainingid',$training_id)
-            ->orderBy("trainingformdetail.seq","ASC");
+        $trainingdetailseq = TrainingForm::trainingformdetaillist()->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq','training_form_details.input_flag')->where('training_form_details.trainingid',$training_id)
+            ->orderBy("training_form_details.seq","ASC");
         $arr_return["datalist"]=$trainingdetailseq->get();
-        $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras	.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq','training_detail_extras	.input_flag')->where('trainingformdetail.trainingid',$training_id)->get();
+        $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras.id','training_detail_extras.detail_id','training_detail_extras.particular','training_detail_extras.special','training_detail_extras.space_lvl','training_detail_extras.seq','training_detail_extras.input_flag')->where('training_form_details.trainingid',$training_id)->get();
         $arr_return["sublist"] = $detailextra;
         $arr_return["msg"] = "success";
 
@@ -312,7 +319,7 @@ class TrainingFormsController extends Controller
         $training_id = $request['id'];
         if($request->has("fromseq") && $request->has("toseq")){
             if($request->input("fromseq")>$request->input("toseq")) {
-                $trainingdetail = TrainingForm::trainingformdetaillist()->select('trainingformdetail.id','trainingformdetail.trainingid','trainingformdetail.no','trainingformdetail.particular','trainingformdetail.special','trainingformdetail.space_lvl','trainingformdetail.seq')->where('trainingformdetail.trainingid',$training_id)->where("seq",">=",$request->input("toseq"))->where("seq","<=",$request->input("fromseq"))->orderBy("seq");
+                $trainingdetail = TrainingForm::trainingformdetaillist()->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq')->where('training_form_details.trainingid',$training_id)->where("seq",">=",$request->input("toseq"))->where("seq","<=",$request->input("fromseq"))->orderBy("seq");
                 if($trainingdetail->count()>0){
                     foreach($trainingdetail->get() as $row_training){
                         if($row_training->seq==$request->input("fromseq")){
@@ -342,10 +349,10 @@ class TrainingFormsController extends Controller
                     }
                 }
             }
-            $trainingdetailseq = TrainingForm::trainingformdetaillist()->select('trainingformdetail.id','trainingformdetail.trainingid','trainingformdetail.no','trainingformdetail.particular','trainingformdetail.special','trainingformdetail.space_lvl','trainingformdetail.seq')->where('trainingformdetail.trainingid',$training_id)
-                ->orderBy("trainingformdetail.seq","ASC");
+            $trainingdetailseq = TrainingForm::trainingformdetaillist()->select('training_form_details.id','training_form_details.trainingid','training_form_details.no','training_form_details.particular','training_form_details.special','training_form_details.space_lvl','training_form_details.seq')->where('training_form_details.trainingid',$training_id)
+                ->orderBy("training_form_details.seq","ASC");
             $arr_return["datalist"]=$trainingdetailseq->get();
-            $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras	.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq')->where('trainingformdetail.trainingid',$training_id)->get();
+            $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras.id','training_detail_extras.detail_id','training_detail_extras.particular','training_detail_extras.special','training_detail_extras.space_lvl','training_detail_extras.seq')->where('training_form_details.trainingid',$training_id)->get();
             $arr_return["sublist"] = $detailextra;
             $arr_return["msg"] = "success";
         } else {
@@ -389,7 +396,7 @@ class TrainingFormsController extends Controller
                 }
             }
 
-            $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras	.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq')->where('training_detail_extras	.detail_id',$training_id)->orderBy("training_detail_extras	.seq","ASC")->get();
+            $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras.id','training_detail_extras.detail_id','training_detail_extras.particular','training_detail_extras.special','training_detail_extras.space_lvl','training_detail_extras.seq')->where('training_detail_extras.detail_id',$training_id)->orderBy("training_detail_extras.seq","ASC")->get();
             $arr_return["datalist"] = $detailextra;
             $arr_return["msg"] = "success";
         } else {
@@ -398,37 +405,49 @@ class TrainingFormsController extends Controller
         return $arr_return;
     }
 
-    public function trainingformpdf($id,Request $request){
-        $condsql=""; $arrfilter=array(); $acust=array();
-
-        $trainingform = TrainingForm::find($id);
-
+    /**
+     * Generate and display the PDF for a training form.
+     *
+     * @param  \App\Models\TrainingForm $trainingform
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function trainingformpdf(TrainingForm $trainingform, Request $request)
+    {
         $data['systemsetting'] = SystemSetting::first();
 
-        if($trainingform->exists()){
-            $arr_data=$trainingform->get();
-            $trainingform_row = TrainingFormDetail::where('trainingid',$id)->orderBy("trainingformdetail.seq","ASC")->get();
-            $detailextra = TrainingForm::trainingdetailextralist()->select('training_detail_extras	.id','training_detail_extras	.detail_id','training_detail_extras	.particular','training_detail_extras	.special','training_detail_extras	.space_lvl','training_detail_extras	.seq','training_detail_extras	.input_flag')->where('training_form_details.trainingid',$id)->orderBy("training_detail_extras.seq","ASC")->get();
-            $companysetting = CompanySetting::where("b_default","Y")->get()->first();
-            $companyid=$companysetting->id;
+        if ($trainingform->exists()) {
+            $trainingform_row = $trainingform->trainingDetails()
+                ->orderBy("seq", "ASC")
+                ->get();
 
-            view()->share('data',$arr_data);
-            view()->share('training_forms',$trainingform);
-            view()->share('trainingform_row',$trainingform_row);
-            view()->share('detailextra',$detailextra);
-            view()->share('compid',$companyid);
-            view()->share('request',$request);
+            $detailextra = TrainingFormDetailExtra::trainingdetaillist()
+                ->select('training_detail_extras.id', 'training_detail_extras.detail_id', 'training_detail_extras.particular', 'training_detail_extras.special', 'training_detail_extras.space_lvl', 'training_detail_extras.seq', 'training_detail_extras.input_flag')
+                ->where('training_form_details.trainingid', $trainingform->id)
+                ->orderBy("training_detail_extras.seq", "ASC")
+                ->get();
+
+            $companysetting = CompanySetting::where("b_default", "Y")->first();
+            $companyid = $companysetting->id;
+
+            view()->share('trainingform', $trainingform);
+            view()->share('data', $trainingform);
+            view()->share('training_forms', $trainingform);
+            view()->share('trainingform_row', $trainingform_row);
+            view()->share('detailextra', $detailextra);
+            view()->share('compid', $companyid);
+            view()->share('request', $request);
 
             PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif']);
-            // pass view file
-            $pdf = PDF::loadView('training_forms.trainingformpdf');
-            $pdf->getDomPDF()->set_option("enable_php", true);
 
+            // Load the view and render it to a variable
+            $pdf = PDF::loadView('trainingform.trainingformpdf');
 
             return $pdf->stream();
         } else {
             return view('report.norecord');
-            //abort('404');
+            // Or you can return a 404 response here if desired.
+            // return abort(404);
         }
     }
 }

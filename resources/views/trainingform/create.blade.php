@@ -35,6 +35,7 @@
             overflow-y: auto;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
 @endsection
 
 @section('content')
@@ -48,8 +49,9 @@
 
             @include('partials/messages')
 
-            <form id="addtrainingform" method="post" action="{{url('trainingform')}}">
-                {{csrf_field()}}
+            <form id="addtrainingform" method="post" action="{{ url('trainingform') }}">
+                @csrf
+
                 <input type="hidden" name="printdo">
                 <input type="hidden" name="salesnote">
                 <input type="hidden" name="printnote">
@@ -175,7 +177,7 @@
                             <div class="form-group">
                                 <table id="servicesalestbl" class="table table-striped">
                                     <thead class="thead-light">
-                                    <tr class="row">
+                                    <tr class="d-flex">
                                         <th scope="col" class="editnum2">&nbsp;</th>
                                         <th class="col-sm-5">
                                             <input type='text' name='description_detail' id="description_detail"
@@ -212,7 +214,7 @@
                                         </th>
                                         <th>&nbsp;</th>
                                     </tr>
-                                    <tr class="row">
+                                    <tr class="d-flex">
                                         <th></th>
                                         <th class="col-sm-6">Particular</th>
                                         <th class="col-sm-1"></th>
@@ -371,6 +373,7 @@
             // $j("input[name='effectivedate']").datepicker({format: "dd/mm/yyyy"}).on('changeDate', function (e) {
             //     $j(this).datepicker('hide');
             // });
+            flatpickr("input[name='effectivedate']", { dateFormat: 'dd/mm/yyyy' });
             $j("#addspecialfield_detail").on('click', function () {
                 js_add_item2();
             })
@@ -444,6 +447,7 @@
             // $j("input[name='salesinvoicedate']").datepicker({format: "dd/mm/yyyy"}).on('changeDate', function (e) {
             //     $j(this).datepicker('hide');
             // });
+            flatpickr("input[name='salesinvoicedate']", { dateFormat: 'dd/mm/yyyy' });
             $j("input[name='en_qty']").on("input", function () {
                 var v = $j(this).val(), vc = v.replace(/[^0-9]/, '');
                 if (v !== vc)
@@ -455,11 +459,7 @@
                 if (v !== vc)
                     $j(this).val(vc);
             });
-
-
         })
-
-
         function add_detail(id) {
             var getid = id;
             document.getElementById("title_id").value = getid;
@@ -468,9 +468,8 @@
             $j("#particularDetailModal").modal('show');
 
         }
-
         $j('#particularDetailModal').on('shown.bs.modal', function () {
-//  window.location="{{url('salesinvoice')}}"
+            //window.location="{{url('salesinvoice')}}"
             $j("input[type='text']").filter("[seq='101']").select();
         })
         $j("#btnAddDetail").on('click', function () {
@@ -502,8 +501,7 @@
                         var input_flag2 = 0;
 
                     }
-
-                    var newrow = $j('<tr>').addClass("row").attr("id", "inputFormRow")
+                    var newrow = $j('<tr>').addClass("d-flex").attr("id", "inputFormRow")
                         .append($j('<td>').attr("scope", "col").addClass("col-sm-1"))
                         .append($j('<p>').append($j("<input>").attr("name", "detid[]").attr("type", "hidden").val($j("input[name='en_detid']").val())).append($j("<input>").attr("name", "stockid[]").attr("type", "hidden").val($j("input[name='en_stockid']").val())))
                         .append($j('<td>').addClass("col-sm-7").append($j("<input>").attr("name", "d_description_detail[" + gettitle_id + "][" + i + "]").attr("type", "hidden").val($j("input[name='d_description_detail[" + i + "]']").val())).append($j("<p " + spacefield_detail + " " + txt_color2 + ">").append($j("input[name='d_description_detail[" + i + "]']").val())))
@@ -517,7 +515,6 @@
                 }
             }
             $j("#particularDetailModal").modal('hide');
-
         })
 
         var seq_field = 0;
@@ -551,7 +548,7 @@
 
                     }
                     var nseq = $j("input[name='stockid[]']").length + 1;
-                    var newrow = $j('<tr>').addClass("row").attr("id", "inputFormRow")
+                    var newrow = $j('<tr>').addClass("d-flex").attr("id", "inputFormRow")
                         .append($j('<td>').attr("scope", "col").addClass("col-sm-1").append($j("<input>").attr("name", "no[" + seq_field + "]").attr("type", "hidden").val($j("input[name='no']").val())).append($j("<p>").append($j("input[name='no']").val())))
                         .append($j('<p>').append($j("<input>").attr("name", "detid[]").attr("type", "hidden").val($j("input[name='en_detid']").val())).append($j("<input>").attr("name", "stockid[]").attr("type", "hidden").val($j("input[name='en_stockid']").val())))
                         .append($j('<td>').addClass("col-sm-7").append($j("<input>").attr("name", "d_description[" + seq_field + "]").attr("type", "hidden").val($j("input[name='description']").val())).append($j("<p " + space_field + " " + txt_color + ">").append($j("input[name='description']").val())))
@@ -612,7 +609,7 @@
                         var detail_input_flag = 0;
                     }
                     var nseq2 = $j("input[name='stockid2[]']").length + 1;
-                    var newrow2 = $j('<tr>').addClass("row").attr("id", "inputFormRow2")
+                    var newrow2 = $j('<tr>').addClass("d-flex").attr("id", "inputFormRow2")
                         .append($j('<td>').attr("scope", "col").addClass("col-sm-1").append($j("<input>").attr("name", "no[" + seq_field + "]").attr("type", "hidden").val($j("input[name='no']").val())).append($j("<p>").append($j("input[name='no']").val())))
                         .append($j('<p>').append($j("<input>").attr("name", "detid2[]").attr("type", "hidden").val($j("input[name='en_detid2']").val())).append($j("<input>").attr("name", "stockid2[]").attr("type", "hidden").val($j("input[name='en_stockid2']").val())))
                         .append($j('<td>').addClass("col-sm-7").append($j("<input>").attr("name", "d_description_detail[" + seq_field2 + "]").attr("id", "d_description_detail_lgt").attr("type", "hidden").val($j("input[name='description_detail']").val())).append($j("<p " + txt_color + ">").append($j("input[name='description_detail']").val())).append($j("<div id='detailfield2_" + seq_field + "'>")))
@@ -656,7 +653,6 @@
                 $j(this).find("td").eq(0).html((i + 1));
                 $j(this).find("a").eq(1).attr("href", "javascript:js_delitem('" + (i + 1) + "');void(0);");
             })
-
         }
     </script>
 @endsection

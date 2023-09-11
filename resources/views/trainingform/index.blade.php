@@ -58,10 +58,11 @@
                                 @endcan
 
                                 @can('DELETE TRAINING FORM')
-                                <form action="{{action('App\Http\Controllers\TrainingFormsController@destroy', $rcatg->id)}}" method="post">
+                                <form action="{{action('App\Http\Controllers\TrainingFormsController@destroy', $rcatg->id)}}" method="post" id="deleteForm_{{ $rcatg->id }}">
                                     {{csrf_field()}}
                                     <input name="_method" type="hidden" value="DELETE">
-                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                    <button class="btn btn-danger" type="submit" onclick="showConfirmDeleteModal(event, {{ $rcatg->id }})"
+                                    >Delete</button>
                                 </form>
                                 @endcan
                                 &nbsp;
@@ -78,5 +79,10 @@
             </tbody>
         </table>
     </div>
+    @include('partials/delete-confirm', ['title' => 'Training Form'])
 </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/common.js') }}"></script>
 @endsection

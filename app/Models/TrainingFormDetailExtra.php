@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class TrainingFormDetailExtra extends Model
 {
@@ -39,25 +40,25 @@ class TrainingFormDetailExtra extends Model
     }
 
     public static function trainingformtablelist(){
-        return DB::table('trainingform')
-            ->join('customer_categories', 'trainingform.systemcod', '=', 'customer_categories.categorycode');
+        return DB::table('training_forms')
+            ->join('customer_categories', 'training_forms.systemcod', '=', 'customer_categories.categorycode');
     }
 
     public static function trainingformdetaillist(){
         return DB::table('trainingform')
-            ->join('customer_categories', 'trainingform.systemcod', '=', 'customer_categories.categorycode')
-            ->join('trainingformdetail','trainingform.id','=','trainingformdetail.trainingid');
+            ->join('customer_categories', 'training_forms.systemcod', '=', 'customer_categories.categorycode')
+            ->join('training_form_details','training_forms.id','=','training_form_details.trainingid');
     }
 
     public static function trainingdetaillist(){
-        return DB::table('trainingdetail_extra')
-            ->join('trainingformdetail','trainingdetail_extra.detail_id','=','trainingformdetail.id');
+        return DB::table('training_detail_extras')
+            ->join('training_form_details','training_detail_extras.detail_id','=','training_form_details.id');
     }
 
     public static function trainingdetailextralist(){
         return DB::table('trainingform')
-            ->join('customer_categories', 'trainingform.systemcod', '=', 'customer_categories.categorycode')
-            ->join('trainingformdetail','trainingform.id','=','trainingformdetail.trainingid')
-            ->join('trainingdetail_extra','trainingformdetail.id','=','trainingdetail_extra.detail_id');
+            ->join('customer_categories', 'training_forms.systemcod', '=', 'customer_categories.categorycode')
+            ->join('training_form_details','training_forms.id','=','training_form_details.trainingid')
+            ->join('training_detail_extras','training_form_details.id','=','training_detail_extras.detail_id');
     }
 }

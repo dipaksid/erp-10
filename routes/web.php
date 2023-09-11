@@ -122,7 +122,7 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::post('/salesinvoice', 'App\Http\Controllers\SalesInvoicesController@store')->name('salesinvoice.store');
     Route::get('/salesinvoice/edit', 'App\Http\Controllers\SalesInvoicesController@edit')->name('salesinvoice.edit');
     Route::get('/salesinvoice/checkcust', 'App\Http\Controllers\SalesInvoicesController@checkcust')->name('salesinvoice.checkcust');
-    Route::post('/salesinvoice/checkcust', 'App\Http\Controllers\SalesInvoicesController@checkcustsales')->name('salesinvoice.checkcustsales');
+    Route::post('/salesinvoice/checkcust',  'App\Http\Controllers\SalesInvoicesController@checkcustsales')->name('salesinvoice.checkcustsales');
     Route::get('/salesinvoice/checkinv', 'App\Http\Controllers\SalesInvoicesController@checkinv')->name('salesinvoice.checkinv');
     Route::post('/salesinvoice/checkinv', 'App\Http\Controllers\SalesInvoicesController@checkinvsales')->name('salesinvoice.checkinv');
     Route::get('/salesinvoice/checkserialnum', 'App\Http\Controllers\SalesInvoicesController@checkserialnum')->name('salesinvoice.checkserialnum');

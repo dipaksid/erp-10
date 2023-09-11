@@ -39,7 +39,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div>
+    <div class="container">
         <!-- Page Heading Start-->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Training Form</h1>
@@ -49,11 +49,13 @@
         @include('partials/messages')
 
         <form id="addtrainingform" method="post" action="{{url('trainingform')}}">
-            {{csrf_field()}}
+            @csrf
+
             <input type="hidden" name="printdo">
             <input type="hidden" name="salesnote">
             <input type="hidden" name="printnote">
             <input type="hidden" name="salesnotelist">
+
             <div class="row form-group">
                 <div class="col-6">
                     <label for="title">System:</label>
