@@ -36,7 +36,7 @@ class CustomerPGAppsController extends Controller
             ->paginate(15)
             ->appends(['searchvalue' => $searchValue]);
 
-        return view('customerpwspgapp.index', compact('pwspgapp', 'searchValue'));
+        return view('customer_pwspg_apps.index', compact('pwspgapp', 'searchValue'));
     }
 
 
