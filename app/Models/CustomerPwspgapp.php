@@ -34,27 +34,30 @@ class CustomerPwspgapp extends Model
     public function scopeWithUserData($query)
     {
         return $query->selectRaw(
-                        "user_details.id as 'id',
-                        user_details.username as 'username',
-                        user_details.mob_pho as 'mob_pho',
-                        user_details.first_name as 'first_name',
-                        group_concat(customers.companyname) as 'customer'"
-                    )
-                    ->join('user_details', 'user_details.id', '=', 'customer_pwspgapps.users_id')
-                    ->join('customers', 'customer_pwspgapps.customers_id', '=', 'customers.id')
-                    ->groupBy('user_details.id')
-                    ->orderBy('user_details.username');
+                "api_oauth_users.id as 'id', api_oauth_users.username as 'username', " .
+                "api_oauth_users.mob_pho as 'mob_pho', api_oauth_users.first_name as 'first_name', " .
+                "group_concat(customers.companyname) as 'customer'"
+            )
+            //->leftJoin('api_oauth_users', 'customer_pwspgapps.users_id', '=', 'api_oauth_users.id')
+            ->leftJoin('customers', 'customer_pwspgapps.customerid', '=', 'customers.id')
+            ->groupBy("customer_pwspgapps.users_id")
+            ->orderBy("customer_pwspgapps.users_id");
     }
 
-    public function scopeSearchByKeyword($query, $searchValue)
+    public function scopeSearchByKeyword($query, $keyword)
     {
-        if ($searchValue) {
-            $sfld = (strlen($searchValue) > 3) ? 'customers.companyname' : 'customers.companycode';
-
-            return $query->where($sfld, 'like', '%' . $searchValue . '%');
+        if (strlen($keyword) > 3) {
+            $field = 'customers.companyname';
+        } else {
+            $field = 'customers.companycode';
         }
 
-        return $query;
+        return $query->where($field, 'like', '%' . $keyword . '%');
+    }
+
+    public function scopeCustomerPwspgappTableList($query)
+    {
+        return $query->with('customer', 'apiOAuthUser');
     }
 
     public function scopeFetchEditData(Builder $query, $id)

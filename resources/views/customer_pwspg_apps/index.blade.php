@@ -55,12 +55,13 @@
                                     @can('EDIT PWS PG APP SERVICE')
                                         <a href="{{ action('App\Http\Controllers\CustomerPGAppsController@edit',$rpwspgapp->id)}}?searchvalue={{((isset($input['searchvalue']))?$input['searchvalue']:'')}}&page={{((isset($input['page']))?$input['page']:'') }}"  class="btn btn-primary ">Edit</a>&nbsp;
                                     @endcan
+
                                     @can('DELETE PWS PG APP SERVICE')
                                         <form action="{{ action('App\Http\Controllers\CustomerPGAppsController@destroy', $rpwspgapp->id) }}" method="post" id="deleteForm_{{ $rpwspgapp->id }}">
                                             @csrf
                                             @method('DELETE')
 
-                                            <button class="btn btn-danger" type="submit" onclick="showConfirmDeleteModal({{ $rpwspgapp->id }})">Delete</button>
+                                            <button class="btn btn-danger" type="submit" onclick="showConfirmDeleteModal(event, {{ $rpwspgapp->id }})">Delete</button>
                                         </form>
                                     @endcan
                                 </div>
@@ -82,5 +83,4 @@
 @section('scripts')
     <script src="{{ asset('js/common.js') }}"></script>
     <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap-autocomplete.min.js') }}"></script>
 @endsection

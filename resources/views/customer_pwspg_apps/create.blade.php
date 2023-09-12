@@ -266,7 +266,6 @@
             } else if($j(".enterseq").filter("[seq='1']").is("button")){
                 $j("button").filter("[seq='1']").focus();
             }
-
             // $j('.customerAutoSelect').autoComplete({minLength:2,
             //     events: {
             //         searchPost: function (resultFromServer) {
@@ -277,7 +276,6 @@
             //         }
             //     }
             // });
-
             const customers = @json($customers);
             $j('.customerAutoSelect').select2({
                 data: customers,

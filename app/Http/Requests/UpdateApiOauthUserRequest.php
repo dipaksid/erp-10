@@ -22,14 +22,13 @@ class UpdateApiOauthUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('customer-pwspg-app');
-
+        $id = $this->route('customer_pwspg_app');
         return [
             'username' => [
                 'required',
                 'max:30',
-                Rule::unique('api_oauth_users')->ignore($id)->where(function ($query) {
-                    return $query->where('client_id', 'PWSPGAPP');
+                Rule::unique('user_details')->ignore($id)->where(function ($query) {
+                    return $query->where('client_id', "PWSPGAPP");
                 })
             ],
             'first_name' => 'required|max:30',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePWSAppRequest;
 use App\Http\Requests\UpdateApiOauthUserRequest;
+use App\Models\Customer;
 use App\Models\CustomerPwspgapp;
 use App\Models\CustomerTotalPayApp;
 use App\Models\User;
@@ -23,6 +24,7 @@ class CustomerPGAppsController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -30,13 +32,13 @@ class CustomerPGAppsController extends Controller
         $searchValue = $request->input('searchvalue');
 
         $pwspgapp = CustomerPwspgapp::withUserData()
-                        ->searchByKeyword($searchValue)
-                        ->paginate(self::ITEMS_PER_PAGE);
+            ->searchByKeyword($searchValue)
+            ->paginate(15)
+            ->appends(['searchvalue' => $searchValue]);
 
-        $pwspgapp->appends(['searchvalue' => $searchValue]);
-
-        return view('customer_pwspg_apps.index', compact('pwspgapp', 'searchValue'));
+        return view('customerpwspgapp.index', compact('pwspgapp', 'searchValue'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -58,8 +60,9 @@ class CustomerPGAppsController extends Controller
      */
     public function store(StorePWSAppRequest $request)
     {
-        $apioauthscope = UserDetail::selectRaw("group_concat(description SEPARATOR ' ') as scope")
-                                        ->where("client_id", "PWSPGAPP")->first();
+        $apioauthscope = null;
+//        $apioauthscope = UserDetail::selectRaw("group_concat(description SEPARATOR ' ') as scope")
+//                                        ->where("client_id", "PWSPGAPP")->first();
 
         $apioauthuser = $this->createApiOauthUser($request, $apioauthscope);
 
@@ -67,7 +70,7 @@ class CustomerPGAppsController extends Controller
 
         $this->submitCompApp($arr_post);
 
-        return redirect('/customer-pwspg-apps')->with('success', 'New PWS PG App Service has been created!');
+        return redirect('/customer-pwspg-app')->with('success', 'New PWS PG App Service has been created!');
     }
 
     protected function createApiOauthUser(Request $request, $apioauthscope)
@@ -82,7 +85,7 @@ class CustomerPGAppsController extends Controller
             'email',
         ]));
 
-        $apioauthuser->scope = $apioauthscope->scope;
+        $apioauthuser->scope = $apioauthscope->scope ?? null;
         $apioauthuser->client_id = "PWSPGAPP";
         $apioauthuser->save();
 
@@ -131,25 +134,44 @@ class CustomerPGAppsController extends Controller
     public function update(UpdateApiOauthUserRequest $request, CustomerPwspgapp $apioauthuser)
     {
         $data = $request->validated();
-
-        $apioauthscope = UserDetail::selectRaw("group_concat(description SEPARATOR ' ') as scope")
-            ->where("client_id", "PWSPGAPP")->first();
+        //$apioauthscope = UserDetail::selectRaw("group_concat(description SEPARATOR ' ') as scope")
+        //->where("client_id", "PWSPGAPP")->first();
 
         $apioauthuser->fill([
             'username' => $data['username'],
             'password' => $data['password'],
             'mob_pho' => $data['mob_pho'],
             'first_name' => $data['first_name'],
-            'idle_tim' => $data['idle_tim'],
-            'access_pdf' => $data['access_pdf'],
-            'email' => $data['email'],
-            'scope' => $apioauthscope->scope,
+            'idle_tim' => isset($data['idle_tim']) ?? $request->get('idle_tim'),
+            'access_pdf' => $data['access_pdf'] ?? $request->get('access_pdf'),
+            'email' => $data['email'] ?? $request->get('email'),
+            'scope' => isset($apioauthscope) && $apioauthscope->scope ?? null,
         ])->save();
 
         $this->updateAssociatedModels($request, $apioauthuser);
 
         return redirect('/customer-pwspg-app')->with('success', 'PWS PG App Service Updated!!');
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $arr_post["id"] = $id;
+        $arr_post["mode"] = "delete";
+
+        $customer_pwspg_app = CustomerPwspgapp::find($id);
+        dd($customer_pwspg_app->id, $customer_pwspg_app->delete());
+
+        $this->submitCompApp($arr_post);
+
+        return redirect('/customer-pwspg-app')->with('success', 'PWS PG App Service deleted!!');
+    }
+
 
     private function updateAssociatedModels($request, $apioauthuser)
     {
@@ -175,9 +197,9 @@ class CustomerPGAppsController extends Controller
 
         // Delete existing entries if needed
         if (empty($pgappIds)) {
-            CustomerPwspgapp::where('userid', $userId)->delete();
+            CustomerPwspgapp::where('users_id', $userId)->delete();
         } else {
-            CustomerPwspgapp::where('userid', $userId)->whereNotIn('id', $pgappIds)->delete();
+            CustomerPwspgapp::where('users_id', $userId)->whereNotIn('id', $pgappIds)->delete();
         }
 
         foreach ($request->input("cust") as $ckey => $custid) {

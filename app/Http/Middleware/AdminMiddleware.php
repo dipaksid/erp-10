@@ -94,7 +94,7 @@ class AdminMiddleware
                     $method = "getModule";
                     break;
                 case 'customer-pwspg-app':
-                    $classname = "App\\Models\\CustomerService";
+                    $classname = "App\\Models\\CustomerPwspgapp";
                     $method = "getModule";
                     break;
                 case 'totalpayapp':

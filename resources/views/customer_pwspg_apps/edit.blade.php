@@ -96,7 +96,7 @@
                     <div class="col-1">
                         <label for="title">&nbsp;</label>
                         <div class="form-group row">
-                            <a class="btn" href="javascript:void(0);" onclick="js_add_customer($('input[name=\'customerid\']').val(),$('.customerAutoSelect').val())">
+                            <a class="btn" href="javascript:void(0);" onclick="js_add_customer($j('.customerAutoSelect').find(':selected').val(),$j('.customerAutoSelect').find(':selected').text())">
                                 <i class="fas fa-fw fa-plus"></i>
                             </a>
                         </div>
