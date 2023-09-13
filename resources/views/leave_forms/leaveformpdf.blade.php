@@ -112,9 +112,9 @@
 <header>
 
     <div class="invheader">
-        @if(file_exists(public_path("/company/".$compid."/bwheaderqr.jpg")))
-            <img src="{{ URL::to('/') }}/company/{{$compid}}/bwheaderqr.jpg" style="position:absolute;top:22px;left:527px;width:70px;"/>
-        @endif
+{{--        @if(file_exists(public_path("/company/".$compid."/bwheaderqr.jpg")))--}}
+{{--            <img src="{{ URL::to('/') }}/company/{{$compid}}/bwheaderqr.jpg" style="position:absolute;top:22px;left:527px;width:70px;"/>--}}
+{{--        @endif--}}
         <div class="text-center">
             <h2 style="font-family: 'arialbold'; padding:0; margin-top:10px;">
                 LEAVE FORM
@@ -131,28 +131,28 @@
                 $form_status = '';
                 $form_status2 = '';
                 if($leaveform->leave_typ=='Annual'){
-                  $leave_typ1 = '&nbsp;✔';
+                  $leave_typ1 = '✔';
                 }
                 if($leaveform->leave_typ=='M.C'){
-                  $leave_typ2 = '&nbsp;✔';
+                  $leave_typ2 = '✔';
                 }
                 if($leaveform->leave_typ=='No Pay'){
-                  $leave_typ3 = '&nbsp;✔';
+                  $leave_typ3 = '✔';
                 }
                 if($leaveform->leave_typ=='Marriage'){
-                  $leave_typ4 = '&nbsp;✔';
+                  $leave_typ4 = '✔';
                 }
                 if($leaveform->leave_typ=='Maternity'){
-                  $leave_typ5 = '&nbsp;✔';
+                  $leave_typ5 = '✔';
                 }
                 if($leaveform->leave_typ=='Emergency'){
-                  $leave_typ6 = '&nbsp;✔';
+                  $leave_typ6 = '✔';
                 }
                 if($leaveform->status==1){
-                  $form_status = '&nbsp;✔';
+                  $form_status = '✔';
                 }
                 if($leaveform->status==0){
-                  $form_status2 = '&nbsp;✔';
+                  $form_status2 = '✔';
                 }
             @endphp
             <div style="float:left;width:100px; font-size:12px; font-weight:bold;">
@@ -263,39 +263,39 @@
             <br><br><br>
             @php
                 $arr_length = strlen($leaveform->leave_reason);
-                $reason_txt = '&nbsp;';
-                $reason_txt2 = '&nbsp;';
+                $reason_txt = ' ';
+                $reason_txt2 = ' ';
                 if($arr_length>50){
                   $arr_reason =  str_split($leaveform->leave_reason,50);
                   $reason_txt = $arr_reason[0];
                   $reason_txt2 = $arr_reason[1];
                 } else {
                   $reason_txt = $leaveform->leave_reason;
-                  $reason_txt2 = '&nbsp;';
+                  $reason_txt2 = ' ';
                 }
                 if(!empty($leaveform->approved_dat)){
                   $approved_dat = $leaveform->approved_dat;
                 } else {
-                  $approved_dat = '&nbsp;';
+                  $approved_dat = ' ';
                 }
                 if(!empty($leaveform->approved_by)){
                   $approved_by = $leaveform->approved_by;
                 } else {
-                  $approved_by = '&nbsp;';
+                  $approved_by = ' ';
                 }
             @endphp
             <div style="float:left;width:120px; font-size:12px; font-weight:bold;">
                 <div style="padding:2px;">Reason of leave: </div>
             </div>
             <div style="float:left;width:550px; font-size:12px; font-weight:bold; border-bottom: 1px solid black;">
-                {{$reason_txt}}
+                {{ $reason_txt }}
             </div>
             <br><br>
             <div style="float:left;width:120px; font-size:12px; font-weight:bold;">
                 <div style="padding:2px;">&nbsp;</div>
             </div>
             <div style="float:left;width:550px; font-size:12px; font-weight:bold; border-bottom: 1px solid black;">
-                {{$reason_txt2}}
+                {{ $reason_txt2}}
             </div>
 
         </div>

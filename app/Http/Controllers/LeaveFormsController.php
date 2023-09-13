@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use File;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
 use TCPDF;
 class LeaveFormsController extends Controller
@@ -49,46 +49,43 @@ class LeaveFormsController extends Controller
         return view('leave_forms.index', compact('leaveform', 'input'));
     }
 
-    public function leaveformpdf($id, Request $request)
-    {
+    public function leaveformpdf($id,Request $request){
+        $condsql=""; $arrfilter=array(); $acust=array();
+
         $leaveform = LeaveForm::find($id);
 
-        if (!$leaveform) {
+        $data['systemsetting'] = SystemSetting::first();
+
+        if($leaveform->exists()){
+            $arr_data=$leaveform->get();
+            //  $evaluationform_row = EvaluationFormDetail::where('evaluation_id',$id)->orderBy("evaluationdetail.seq","ASC")->get();
+            //  $detailextra = TrainingForm::trainingdetailextralist()->select('trainingdetail_extra.id','trainingdetail_extra.detail_id','trainingdetail_extra.particular','trainingdetail_extra.special','trainingdetail_extra.space_lvl','trainingdetail_extra.seq','trainingdetail_extra.input_flag')->where('trainingformdetail.trainingid',$id)->orderBy("trainingdetail_extra.seq","ASC")->get();
+            $companysetting = CompanySetting::where("b_default","Y")->get()->first();
+            $getapply_user = Staff::where('name',$leaveform->staff_name)->first();
+            if($getapply_user){
+                $companyid=$getapply_user->comp_id;
+            } else {
+                $companyid=$companysetting->id;
+            }
+
+            $date_now = $request->session()->get('login_date');
+            view()->share('data',$arr_data);
+            view()->share('leaveform',$leaveform);
+            view()->share('compid',$companyid);
+            view()->share('date_now',$date_now);
+            view()->share('request',$request);
+
+            PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+            // pass view file
+            $pdf = PDF::loadView('leave_forms.leaveformpdf');
+            $pdf->getDomPDF()->set_option("enable_php", true);
+
+
+            return $pdf->stream();
+        } else {
             return view('report.norecord');
+            //abort('404');
         }
-
-        $systemSetting = SystemSetting::first();
-        $getApplyUser = Staff::where('name', $leaveform->staff_name)->first();
-        $companySetting = CompanySetting::where("b_default", "Y")->first();
-
-        $companyid = $getApplyUser ? $getApplyUser->comp_id : $companySetting->id;
-        $dateNow = $request->session()->get('login_date');
-
-        $data = [
-            'systemsetting' => $systemSetting,
-            'data' => $leaveform,
-            'leaveform' => $leaveform,
-            'compid' => $companyid,
-            'date_now' => $dateNow,
-            'request' => $request,
-        ];
-
-        // Load the view into a variable
-        $view = view('leave_forms.leave_form_pdf', $data)->render();
-        $pdf = new TCPDF();
-        $pdf->AddPage();
-
-        // Set content
-        $pdf->writeHTML($view, true, false, true, false, '');
-
-        // Get the PDF content as a string
-        $pdfContent = $pdf->Output('', 'S');
-
-        // Send the PDF as a downloadable stream
-        return response($pdfContent)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="leaveform.pdf"');
-
     }
 
     /**

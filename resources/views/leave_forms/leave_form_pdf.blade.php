@@ -113,13 +113,15 @@
 
     <div class="invheader">
         @if(file_exists(public_path("/company/".$compid."/bwheaderqr.jpg")))
-            <img src="{{ URL::to('/') }}/company/{{$compid}}/bwheaderqr.jpg" style="position:absolute; top:22; left:527; width:70px;"/>
+            <img src="{{ URL::to('/') }}/company/{{$compid}}/bwheaderqr.jpg" style="position:absolute;top:22;left:527;width:70;" />
         @endif
+
         <div class="text-center">
-            <h2 style="font-family: 'arialbold'; padding:0; margin-top:10px;">
+            <h2 style="font-family:'arialbold';padding:0;margin-top:10px;">
                 LEAVE FORM
             </h2>
         </div>
+
         <div>
             @php
                 $leave_typ1 = '';
