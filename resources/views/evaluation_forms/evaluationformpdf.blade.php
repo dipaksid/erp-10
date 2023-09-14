@@ -249,6 +249,14 @@
             width: 50px;
             border: 1px solid;
         }
+
+        .pixelart {
+            width: 1px;
+            height: 1px;
+            transform: scale(20);
+            background: transparent;
+            box-shadow: 27px 0px white, 26px 1px white, 25px 2px white, 24px 3px white, 23px 4px white, 22px 5px white, 21px 6px white, 20px 7px white, 19px 8px white, 18px 9px white, 17px 10px white, 16px 11px white, 15px 12px white, 14px 13px white, 13px 14px white, 12px 15px white, 11px 16px white, 10px 17px white, 9px 18px white, 8px 19px white, 7px 20px white, 6px 21px white, 5px 22px white, 4px 23px white, 3px 24px white, 2px 25px white, 1px 26px white, 0px 27px white;
+        }
     </style>
 </head>
 <body>
@@ -424,21 +432,21 @@
                     <td style="text-align:left;  margin-left:5px!important;">
                         <b>{{$row['form_title']}}</b><br>- {{$row['form_detail']}}</td>
                     <td class="linetd1">
-                        <table style="font-size:13px; text-align:right;">
+                        <table style="font-size:13px; text-align:right;width:100%;">
                             <tr>
-                                <td><span class="total-nums1"></span><span style="margin-right:25px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <td rowspan="2"><span class="total-nums1"></span><span style="margin-right:25px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 </td>
-                                <td><span class="slash0"></span><span class="total-num2">{{$row['max_rating']}}</span>
+                                <td rowspan="2"><span class="slash0"></span><span class="total-num2">{{$row['max_rating']}}</span>
                                 </td>
                             </tr>
                         </table>
                     </td>
                     <td class="linetd1">
-                        <table style="font-size:13px; text-align:right;">
-                            <tr>
-                                <td><span class="total-nums2"></span><span style="margin-right:25px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <table style="font-size:13px; text-align:right;width:100%;">
+                            <tr colspan="2">
+                                <td rowspan="2"><span class="total-nums2"></span><span style="margin-right:25px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 </td>
-                                <td><span class="slash0"></span><span class="total-num2">{{$row['max_rating']}}</span>
+                                <td rowspan="2"><span class="slash0"></span><span class="total-num2">{{$row['max_rating']}}</span>
                                 </td>
                             </tr>
                         </table>

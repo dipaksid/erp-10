@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
 use File;
+use Ramsey\Uuid\Type\Integer;
 use Storage;
 
 class TrainingFormsController extends Controller
@@ -408,13 +409,14 @@ class TrainingFormsController extends Controller
     /**
      * Generate and display the PDF for a training form.
      *
-     * @param  \App\Models\TrainingForm $trainingform
+     * @param  Integer $id
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function trainingformpdf(TrainingForm $trainingform, Request $request)
+    public function trainingformpdf($id, Request $request)
     {
         $data['systemsetting'] = SystemSetting::first();
+        $trainingform = TrainingForm::findOrFail($id);
 
         if ($trainingform->exists()) {
             $trainingform_row = $trainingform->trainingDetails()
