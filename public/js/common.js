@@ -29,7 +29,6 @@ function deleteUser() {
 //     }
 // }
 function removeModalBackdrop() {
-    console.log("ae dofa");
     var modalBackdrop = document.querySelector('.modal-backdrop');
     if (modalBackdrop) {
         modalBackdrop.parentNode.removeChild(modalBackdrop);

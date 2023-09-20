@@ -82,7 +82,7 @@
                 </tbody>
             </table>
         </div>
-        @include('partials/delete-confirm', ['title' => 'Umos'])
+        @include('partials/delete-confirm', ['title' => 'UOMs'])
     </div>
 @endsection
 

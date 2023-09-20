@@ -48,7 +48,7 @@
 
             @include('partials/messages')
 
-            <form id="servicerateform" method="post" action="{{ url('services_rates') }}" class="ml-2">
+            <form id="servicerateform" method="post" action="{{ route('services_rates.store') }}" class="ml-2">
                 @csrf
 
                 <input type="hidden" name="printdo">
@@ -311,7 +311,17 @@
             });
         })
         function js_add_item(){
-            if($j("input[name='description']").val()!="" && $j("input[name='rate']").val()>0){
+
+            var rateInput = $j("input[name='rate']");
+            var rateValue = parseInt(rateInput.val(), 10);
+
+            if (isNaN(rateValue) || rateValue <= 0) {
+                alert("Rate must be a positive integer.");
+                rateInput.focus();
+                return false;
+            }
+
+            if($j("input[name='description']").val() != "" && rateValue >0){
                 var editnum = $j(".editnum").html().trim();
                 if(isNaN(parseInt(editnum,10))) {
                     var r = $j("input[name='rate']").val();

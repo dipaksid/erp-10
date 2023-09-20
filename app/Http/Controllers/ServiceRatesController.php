@@ -52,11 +52,16 @@ class ServiceRatesController extends Controller
             return redirect('/services_rates/create')->with('danger', 'Effective Date already exists!');
         }
 
-        $d_description = $request->input('d_description');
-        $d_rate = $request->input('d_rate');
+        $d_description = $request->get('d_description');
+        $d_rate = $request->get('d_rate');
 
         // Check if both arrays exist and have the same count
-        if ($d_description && $d_rate && count($d_description) === count($d_rate)) {
+        if(count($d_description) == 1) {
+            $description = [
+                'rate' => $request->get('d_rate')[0],
+                'description' => $request->get('d_description')[0]
+            ];
+        } else if ($d_description && $d_rate && count($d_description) === count($d_rate)) {
             $description = array_combine($d_description, $d_rate);
         } else {
             $description = [];
@@ -64,7 +69,7 @@ class ServiceRatesController extends Controller
 
         ServiceRate::create([
             'effectivedate' => $effectivedate,
-            'description' => json_encode($description),
+            'description' => json_encode($description, JSON_PRETTY_PRINT),
             'rate' => null,
         ]);
 

@@ -240,7 +240,7 @@
                 @can('AREA LIST') <a class="collapse-item" href="{{ route('areas.index') }}">Area</a> @elsecan('ADD AREA') <a class="collapse-item" href="{{ route('areas.create') }}">Area</a> @endcan
                 @can('TERM LIST') <a class="collapse-item" href="{{ route('terms.index') }}">Term</a> @elsecan('ADD TERM') <a class="collapse-item" href="{{ route('terms.create') }}">Term</a> @endcan
                 @can('CUSTOMER CATEGORY LIST') <a class="collapse-item" href="{{ route('customercategory.index') }}">Customer Category</a> @elsecan('ADD CUSTOMER CATEGORY') <a class="collapse-item" href="{{ route('customercategory.create') }}">Customer Category</a> @endcan
-                @can('BANKS LIST') <a class="collapse-item" href="{{ route('banks.index') }}">Bank</a> @elsecan('ADD BANK') <a class="collapse-item" href="{{ route('banks.create') }}">Bank</a> @endcan
+                @can('BANKS LIST') <a class="collapse-item" href="{{ route('banks.index') }}">Bank</a> @elsecan('ADD BANK') <a class="collapse-item" href="{{ route('banks.index') }}">Bank</a> @endcan
                 @can('AGENT LIST') <a class="collapse-item" href="{{ route('agents.index') }}">Agents</a> @elsecan('ADD agents') <a class="collapse-item" href="{{ route('agents.create') }}">Agents</a> @endcan
                 @can('STAFF LIST') <a class="collapse-item" href="{{ route('staffs.index') }}">Staff</a> @elsecan('ADD STAFF') <a class="collapse-item" href="{{ route('staffs.create') }}">Staff</a> @endcan
                 @can('STOCK CATEGORY LIST') <a class="collapse-item" href="{{ route('stockcategories.index') }}">Stock Category</a> @elsecan('ADD STOCK CATEGORY') <a class="collapse-item" href="{{ route('stockcategories.create') }}">Stock Category</a> @endcan

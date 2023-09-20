@@ -63,7 +63,13 @@
                                                     $com = ',';
                                                 }
                                         @endphp
-                                        {{$value->description}} </br>
+
+                                        @if(isset($value->description))
+                                            {{$value->description }} </br>
+                                        @elseif(!is_numeric($value))
+                                            {{$value}} </br>
+                                        @endif
+
                                     @endforeach
 
                                 @endif
@@ -84,9 +90,12 @@
                                                     $com = ',';
                                                 }
                                         @endphp
-                                        {{number_format((float) $value->rate, 2)}} </br>
+                                        @if(isset($value->description))
+                                            {{number_format((float) $value->rate, 2)}} </br>
+                                        @elseif(is_numeric($value))
+                                            {{$value}} </br>
+                                        @endif
                                     @endforeach
-
                                 @endif
                             </td>
                             <td class="text-center col-2">

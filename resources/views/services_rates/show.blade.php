@@ -76,13 +76,25 @@
                     @php
                         $get_effective = json_decode($services_rate->description);
                     @endphp
-                    @foreach($get_effective as $key => $value)
+                    @if(is_array($get_effective) && count($get_effective) > 1)
+                        @foreach($get_effective as $key => $value)
+                            <tr class="d-flex">
+                                <td scope="col">{{$key+1}}</td>
+                                <td class="col-sm-8">{{$value->description}}</td>
+                                <td class="col-sm-2">{{number_format((float) $value->rate, 2)}}</td>
+                            </tr>
+                        @endforeach
+                    @else
                         <tr class="d-flex">
-                            <td scope="col">{{$key+1}}</td>
-                            <td class="col-sm-8">{{$value->description}}</td>
-                            <td class="col-sm-2">{{number_format((float) $value->rate, 2)}}</td>
+                            <td scope="col">1</td>
+                            <td class="col-sm-8">
+                                {{ $get_effective->description ?? 'NA' }}
+                            </td>
+                            <td class="col-sm-2">
+                                {{ $get_effective->rate ?? 0 }}
+                            </td>
                         </tr>
-                    @endforeach
+                    @endif
                     </tbody>
                 </table>
                 <a href="{{ action('App\Http\Controllers\ServiceRatesController@index') }}" class="btn btn-secondary btn-xs" id="btnBack">Back</a>

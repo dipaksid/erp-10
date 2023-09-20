@@ -54,7 +54,7 @@
                                         <form action="{{ action('App\Http\Controllers\PermissionsController@destroy', $rpermission->id)}}" method="post" id="deleteForm_{{ $rpermission->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="showConfirmDeleteModal({{ $rpermission->id }})">
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="showConfirmDeleteModal(event, {{ $rpermission->id }})">
                                                 Delete
                                             </button>
                                         </form>
@@ -72,7 +72,7 @@
             </table>
         </div>
     </div>
-    @include('partials/delete-confirm')
+    @include('partials/delete-confirm', ['title' => 'Permissions'])
 @endsection
 
 @section('scripts')

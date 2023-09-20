@@ -197,12 +197,12 @@
                 },300);
                 return false;
             });
-            $j('.stockAutoSelect').on('blur', function (e, datum) {
-                $j(this).change();
-                return false;
-            });
-            $j('.stockAutoSelect').val("{{$uom->uomsstock()->pluck('stockcode')->implode('')}}");
-            $j("input[name='stocks_id']").val("{{$uom->stocks_id}}");
+            // $j('.stockAutoSelect').on('blur', function (e, datum) {
+            //     $j(this).change();
+            //     return false;
+            // });
+            //$j('.stockAutoSelect').val("{{$uom->uomsstock()->pluck('stockcode')->implode('')}}");
+            //$j("input[name='stocks_id']").val("{{$uom->stocks_id}}");
         })
     </script>
 @endsection
