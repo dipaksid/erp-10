@@ -154,7 +154,7 @@ class EvaluationFormsController extends Controller
                 $evaluationDetail = EvaluationDetail::find($detailId);
 
                 if ($evaluationDetail) {
-                    $evaluationDetail->updateEvaluationDetail($data2);
+                    $evaluationDetail->updateEvaluationFormDetail($data2);
                 }
             } else {
                 $evaluationDetail = new EvaluationDetail();
