@@ -48,7 +48,7 @@
                     <select class="form-control enterseq" seq="6" name="categoryid">
                         <option value=""> -- Selection --</option>
                         @foreach ($data["category"] as $rcatg)
-                            <option value="{{$rcatg['id']}}" {{ (($rcatg['id']==$customer['categoryid'])?"selected":"") }}>
+                            <option value="{{$rcatg['id']}}" {{ (($rcatg['id']==$customer['customer_categories_id'])?"selected":"") }}>
                                 {{$rcatg['description']}}
                             </option>
                         @endforeach
@@ -65,11 +65,11 @@
                     <input type="text" seq="8" class="form-control enterseq" name="homepage" value="{{ $customer['homepage'] }}"/>
                 </div>
                 <div class="col-3">
-                    <label for="title">Customer Group:</label>
+                    <label for="title">Customer Group: </label>
                     <select class="form-control enterseq" seq="9" name="customergroupid">
                         <option value=""> -- Selection --</option>
                         @foreach ($data["customer_group"] as $rcustomergroup)
-                            <option value="{{$rcustomergroup['id']}}" {{ (( isset($data["groupdetail"]) && count($data["groupdetail"])>0 && $rcustomergroup['id']==$data["groupdetail"][0]["customergroupid"])?"selected":"") }}>
+                            <option value="{{$rcustomergroup['id']}}" {{ (( isset($data["group_detail"]) && ($rcustomergroup['id'] == $data["group_detail"]['customer_groups_id']) ? "selected" : "")) }}>
                                 {{$rcustomergroup['groupcode'].'-'.$rcustomergroup['description']}}
                             </option>
                         @endforeach
@@ -84,7 +84,7 @@
                     <select class="form-control enterseq" seq="11" name="termid">
                         <option value=""> -- Selection --</option>
                         @foreach ($data["term"] as $rterm)
-                            <option value="{{ $rterm['id']}}" {{ (($rterm['id']==$customer['termid']) ? "selected" : "") }}>
+                            <option value="{{ $rterm['id']}}" {{ (($rterm['id']==$customer['terms_id']) ? "selected" : "") }}>
                                 {{ $rterm['term'] }}
                             </option>
                         @endforeach
@@ -116,7 +116,7 @@
                     <select class="form-control enterseq" seq="16" name="areaid">
                         <option value=""> -- Selection --</option>
                         @foreach ($data["area"] as $rarea)
-                            <option value="{{ $rarea['id'] }}" {{ (($rarea['id']==$customer['areaid'])?"selected":"") }}>
+                            <option value="{{ $rarea['id'] }}" {{ (($rarea['id']==$customer['areas_id'])?"selected":"") }}>
                                 {{ $rarea['description'] }}
                             </option>
                         @endforeach

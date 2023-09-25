@@ -29,7 +29,6 @@ class LeaveFormsController extends Controller
     {
         $getUsername = Auth::user()->name;
         $isAdmin = Auth::user()->hasRole('ADMINISTRATOR');
-
         $query = LeaveForm::query();
 
         if ($request->has('searchvalue')) {

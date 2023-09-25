@@ -152,18 +152,18 @@
                                             </div>
                                         </td>
                                         <td class="pl-1 pr-0">
-                            <span class="addmodify">
-                              @if(isset($service[$rcategory->id]))
-                                    <a href="javascript:void(0);" onclick="js_add(this);" class="btn btn-primary">Edit</a>
-                                    <a href="javascript:void(0);" onclick="js_delete(this, '{{$rcategory->id}}');" class="btn btn-danger">Delete</a>
-                                @else
-                                    <a href="javascript:void(0);" onclick="js_add(this);" class="btn btn-primary">Add</a>
-                                @endif
-                            </span>
-                                            <span class="action d-none" >
-                              <a href="javascript:void(0);" onclick="js_save(this, '{{$rcategory->id}}');" seq="16" class="btn btn-primary enterseq">Save</a>
-                              <a href="javascript:void(0);" onclick="js_cancel(this, '{{$rcategory->id}}');" class="btn btn-danger ">Cancel</a>
-                            </span>
+                                            <span class="addmodify">
+                                                @if(isset($service[$rcategory->id]))
+                                                    <a href="javascript:void(0);" onclick="js_add(this);" class="btn btn-primary">Edit</a>
+                                                    <a href="javascript:void(0);" onclick="js_delete(this, '{{$rcategory->id}}');" class="btn btn-danger">Delete</a>
+                                                @else
+                                                    <a href="javascript:void(0);" onclick="js_add(this);" class="btn btn-primary">Add</a>
+                                                @endif
+                                            </span>
+                                            <span class="action d-none">
+                                                <a href="javascript:void(0);" onclick="js_save(this, '{{$rcategory->id}}');" seq="16" class="btn btn-primary enterseq">Save</a>
+                                                <a href="javascript:void(0);" onclick="js_cancel(this, '{{$rcategory->id}}');" class="btn btn-danger ">Cancel</a>
+                                            </span>
                                         </td>
                                     </tr>
                                     @if(isset($rcategory->b_rmk) && $rcategory->b_rmk=="Y")

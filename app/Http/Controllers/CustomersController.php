@@ -38,7 +38,8 @@ class CustomersController extends Controller
         $filters['srch_area'] = $request->input('srch_area');
         $customers = Customer::searchCustomer($filters);
         $pdffile = null;
-        if ($request->has('btnpdf') && $request->input('btnpdf') !== "") {
+        if ($request->has('btnpdf') && $request->input('btnpdf') !== "" && $request->get('btnpdf') !== null) {
+            dd("123");
             $pdffile = url("/pdf/".$this->generatePdf($customers));
             session()->flash('success', 'Filtered PDF generated successfully created!');
         }
@@ -199,12 +200,14 @@ class CustomersController extends Controller
     {
         $customer->startdate = Carbon::createFromTimestamp(Carbon::parse($customer->startdate)->timestamp)->format('d/m/Y');
 
+        //dd($customer->customerGroupsCustomer()->first()->toArray());
+
         $data = [
             'area' => Area::where('isactive', 1)->get(),
             'category' => CustomerCategory::get(),
             'term' => Term::get(),
             'customer_group' => CustomerGroup::get(),
-            'group_detail' => customerGroupsCustomer::where('customers_id', $customer->id)->get(),
+            'group_detail' => $customer->customerGroupsCustomer()->first(),
         ];
 
         return view('customers.edit', compact('data', 'customer'));
@@ -227,12 +230,12 @@ class CustomersController extends Controller
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         $customer->update($postedData);
         // Handling CustomerGroupDetail
-
         if ($request->has('customergroupid') && $request->get('customergroupid') != null) {
-            $relationExists = $customer->customerGroupsCustomer->toArray();
-            if (count($relationExists)) {
-                $customer->customerGroupsCustomer->update([
-                    'customergroupid' => $request->customergroupid,
+            $relationExists = $customer->customerGroupsCustomer();
+
+            if ($relationExists->count()) {
+                $relationExists->update([
+                    'customer_groups_id' => $request->customergroupid,
                     'customers_id' => $customer->id
                 ]);
             } else {
