@@ -219,8 +219,8 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::post('/report/outstanding', 'ReportOutstandingController@reportpdf')->name('report.outstanding');
     Route::get('/report/receipt', 'ReportReceiptController@index')->name('report.receipt');
     Route::post('/report/receipt', 'ReportReceiptController@reportpdf')->name('report.receipt');
-    Route::get('/report/sales', 'ReportSalesController@index')->name('report.sales');
-    Route::post('/report/sales', 'ReportSalesController@reportpdf')->name('report.sales');
+    Route::get('/report/sales', 'App\Http\Controllers\ReportSalesController@index')->name('report.sales');
+    Route::post('/report/sales', 'App\Http\Controllers\ReportSalesController@reportpdf')->name('report.sales');
     Route::get('/report/sticker', 'ReportStickerController@index')->name('report.sticker');
     Route::post('/report/sticker', 'ReportStickerController@reportpdf')->name('report.sticker');
     Route::get('/report/salesexportlhdn', 'ReportSalesExportLHDNController@index')->name('report.salesexportlhdn');

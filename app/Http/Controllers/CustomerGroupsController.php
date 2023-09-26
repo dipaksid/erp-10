@@ -479,7 +479,8 @@ class CustomerGroupsController extends Controller
                                     ->where('customer_categories_id', $categoryId)
                                     ->first();
         }
-        if (!$data) {
+
+        if (empty($data)) {
             return response()->json(['error' => 'Data not found'], 404);
         }
 
