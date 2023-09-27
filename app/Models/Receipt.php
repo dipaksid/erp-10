@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Receipt extends Model
@@ -29,10 +30,13 @@ class Receipt extends Model
         return $this->belongsTo('App\Models\Customer', 'customers_id', 'id');
     }
 
-    public function generate_or_code($request,$companyid){
-        $lastnum = $this->where(DB::raw("(DATE_FORMAT(receiptdate,'%Y%m'))"), "=", Carbon::createFromFormat('d/m/Y', $request->session()->get('login_date'))->format('Ym'))
+    public function generate_or_code($request, $companyid)
+    {
+        $lastnum = $this->where(DB::raw("(DATE_FORMAT(receiptdate,'%Y%m'))"), "=", Carbon::createFromFormat('d/m/Y', $request->session()->get('login_date'))
+                        ->format('Ym'))
                         ->where("companyid",$companyid)
                         ->max("receiptcode");
+
         //$lastnum = $this->where('receiptdate',)->max("receiptcode");
         if(!is_null($lastnum)){
             $lastrun = substr($lastnum,-3);
@@ -47,13 +51,13 @@ class Receipt extends Model
     public static function getcustpaylist($customerid){
 
         return DB::table('receipts')
-            ->leftjoin('armatched',function($join) {
-                $join->on('receipts.id', '=', 'armatched.artranid');
-                $join->where('armatched.artype', '=', 'OR');
+            ->leftjoin('armatches',function($join) {
+                $join->on('receipts.id', '=', 'armatches.artranid');
+                $join->where('armatches.artype', '=', 'OR');
             })
-            ->leftjoin('salesinvoices',function($join) {
-                $join->on('armatched.payforid', '=', 'salesinvoices.id');
-                $join->where('armatched.payfortype', '=', 'INV');
+            ->leftjoin('sales_invoices',function($join) {
+                $join->on('armatches.payforid', '=', 'sales_invoices.id');
+                $join->where('armatches.payfortype', '=', 'INV');
             })
             ->where("receipts.customerid",$customerid)
             ->groupBy('receipts.id');
@@ -62,13 +66,13 @@ class Receipt extends Model
     public static function getrecppaylist($receiptid){
 
         return DB::table('receipts')
-            ->leftjoin('armatched',function($join) {
-                $join->on('receipts.id', '=', 'armatched.artranid');
-                $join->where('armatched.artype', '=', 'OR');
+            ->leftjoin('armatches',function($join) {
+                $join->on('receipts.id', '=', 'armatches.artranid');
+                $join->where('armatches.artype', '=', 'OR');
             })
-            ->leftjoin('salesinvoices',function($join) {
-                $join->on('armatched.payforid', '=', 'salesinvoices.id');
-                $join->where('armatched.payfortype', '=', 'INV');
+            ->leftjoin('sales_invoices',function($join) {
+                $join->on('armatches.payforid', '=', 'sales_invoices.id');
+                $join->where('armatches.payfortype', '=', 'INV');
             })
             ->where("receipts.id",$receiptid);
     }
@@ -92,15 +96,15 @@ class Receipt extends Model
         $dateto = Carbon::createFromFormat('d/m/Y', $request->input("datto"))->format('Y-m-d');
 
         return DB::table('receipts')
-            ->leftjoin('armatched',function($join) {
-                $join->on('receipts.id', '=', 'armatched.artranid');
-                $join->where('armatched.artype', '=', 'OR');
+            ->leftjoin('armatches',function($join) {
+                $join->on('receipts.id', '=', 'armatches.artranid');
+                $join->where('armatches.artype', '=', 'OR');
             })
-            ->leftjoin('salesinvoices',function($join) {
-                $join->on('armatched.payforid', '=', 'salesinvoices.id');
-                $join->where('armatched.payfortype', '=', 'INV');
+            ->leftjoin('sales_invoices',function($join) {
+                $join->on('armatches.payforid', '=', 'sales_invoices.id');
+                $join->where('armatches.payfortype', '=', 'INV');
             })
-            ->leftjoin('customers', 'receipts.customerid', '=', 'customers.id')
+            ->leftjoin('customers', 'receipts.customers_id', '=', 'customers.id')
             ->whereDate("receipts.receiptdate",">=",$datefr)
             ->whereDate("receipts.receiptdate","<=",$dateto);
     }

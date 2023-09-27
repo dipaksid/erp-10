@@ -102,18 +102,18 @@ class SalesInvoice extends Model
     }
     public static function getoutstandingsaleslist(){
         return DB::table('sales_invoices')
-            ->leftjoin(' armatches',function($join) {
-                $join->on('sales_invoices.id', '=', ' armatches.payforid');
-                $join->where(' armatches.payfortype', '=', 'INV');
-                //$join->where(' armatches.artype', '=', 'OR');
+            ->leftjoin('armatches',function($join) {
+                $join->on('sales_invoices.id', '=', 'armatches.payforid');
+                $join->where('armatches.payfortype', '=', 'INV');
+                //$join->where('armatches.artype', '=', 'OR');
             })
             ->leftjoin('receipts',function($join) {
-                $join->on(' armatches.artranid', '=', 'receipts.id');
-                $join->where(' armatches.artype', '=', 'OR');
+                $join->on('armatches.artranid', '=', 'receipts.id');
+                $join->where('armatches.artype', '=', 'OR');
             })
-            ->leftjoin('arcn',function($join) {
-                $join->on(' armatches.artranid', '=', 'arcn.id');
-                $join->where(' armatches.artype', '=', 'CN');
+            ->leftjoin('arcns',function($join) {
+                $join->on('armatches.artranid', '=', 'arcns.id');
+                $join->where('armatches.artype', '=', 'CN');
             })
             ->leftjoin('customers',function($join) {
                 $join->on('sales_invoices.customers_id', '=', 'customers.id');
@@ -183,13 +183,13 @@ class SalesInvoice extends Model
             ->leftjoin('customers',function($join) {
                 $join->on('sales_invoices.customers_id', '=', 'customers.id');
             })
-            ->join(' armatches',function($join) {
-                $join->on('sales_invoices.id', '=', ' armatches.payforid');
-                $join->where(' armatches.payfortype', '=', 'INV');
+            ->join('armatches',function($join) {
+                $join->on('sales_invoices.id', '=', 'armatches.payforid');
+                $join->where('armatches.payfortype', '=', 'INV');
             })
             ->join('arcns',function($join) {
-                $join->on(' armatches.artranid', '=', 'arcns.id');
-                $join->where(' armatches.artype', '=', 'CN');
+                $join->on('armatches.artranid', '=', 'arcns.id');
+                $join->where('armatches.artype', '=', 'CN');
             });
     }
 }
