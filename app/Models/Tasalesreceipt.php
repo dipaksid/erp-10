@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Tasalesreceipt extends Model
 {
     use HasFactory;
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'ta_sales_receipts';
 
-    protected $guarded = [];
-
+    protected $fillable = ['salesinvoicecode', 'salesinvoicedate', 'receiptcode', 'receiptdate', 'customername', 'nettotalamount', 'bankdoc_id', 'companyid'];
 }

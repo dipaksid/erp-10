@@ -23,11 +23,11 @@
                 height: 180px;
             }
             footer {
-                position: fixed; 
-                bottom: -30px; 
-                left: 0px; 
+                position: fixed;
+                bottom: -30px;
+                left: 0px;
                 right: 0px;
-                height: 30px; 
+                height: 30px;
             }
             div.col{
                 float:left;
@@ -38,9 +38,9 @@
                 float:left;
                 font-size: x-small;
                 padding:5px;
-                border-top: 1px solid; 
+                border-top: 1px solid;
                 font-weight: bold;
-                border-bottom: 1px solid; 
+                border-bottom: 1px solid;
             }
             div.col1{
                 width:70px;
@@ -75,7 +75,7 @@
             div.moneyconvert{
                 font-size: x-small;
             }
-            div.page-break{ page-break-after: always; } 
+            div.page-break{ page-break-after: always; }
             .text-center{
                 text-align: center;
             }
@@ -101,7 +101,7 @@
         </script>
         <!-- Define header and footer blocks before your content -->
         <header>
-            <img style='width:20px; position:fixed; right:160; top:-135;' src="{{storage_path('imgs/whatsapp.png')}}">
+            <img style='width:20px; position:fixed; right:160; top:-135;' src="{{ public_path('img/whatsapp.png') }}">
             <div class="invheader">
                 <div class="text-center">
                     <b style="font-size:19px;font-weight:bold;">BRIGHT-WIN TECHNOLOGY (M) SDN BHD</b>
@@ -110,7 +110,7 @@
                 <div class="text-center" style="font-size:10px;">
                     21-1A JALAN PERDANA 4/8 TAMAN PANDAN PERDANA 55300 KUALA LUMPUR<br>
                     Tel : 03-92824788, 012-2083761 &nbsp;&nbsp;&nbsp; Support Line : 016-2163761 <br>
-                    URL : www.brightwin.com  &nbsp;&nbsp;&nbsp; Email : pychan@brightwin.com &nbsp; 
+                    URL : www.brightwin.com  &nbsp;&nbsp;&nbsp; Email : pychan@brightwin.com &nbsp;
                 </div>
                 <div class="text-center">
                     <h2 style="font-family: 'arialbold'; padding:0;">
@@ -170,7 +170,7 @@
         </header>
 
         <footer>
-            
+
         </footer>
 
         <!-- Wrap the content of your PDF inside a main tag -->
@@ -187,7 +187,7 @@
                 @if($ilop%$maxpg==0 && $ilop>0)
                     <div class="page-break"></div>
                 @endif
-				
+
                 @if($karea=="" || $karea!=$rows->areacode || $kcsgp!=$rows->groupname)
 					@if($kcsgp=="")
 						<div>
@@ -252,8 +252,8 @@
 					@if($ilop%$maxpg==0 && $ilop>0)
 						<div class="page-break"></div>
 					@endif
-                @endif				
-                
+                @endif
+
                 <div>
                     <div class="col col1">{{$rows->date}}</div>
                     <div class="col col2">{{$rows->invoiceno}}</div>
@@ -283,7 +283,7 @@
                     <div class="fclear"></div>
                 </div>
             @endif
-			
+
             @if($kcsgp!="")
                 <div>
                     <div class="col col1"></div>

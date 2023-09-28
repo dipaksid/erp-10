@@ -454,4 +454,11 @@ class CustomerService extends Model
             unset($arr_post);
         }
     }
+
+    public static function customerservicereportlist(){
+        return DB::table('customer_services')
+            ->leftjoin('customers',  'customer_services.customers_id', '=','customers.id')
+            ->leftjoin('customer_categories', 'customer_services.customer_categories_id', '=', 'customer_categories.id')
+            ->leftjoin('areas', 'customers.areas_id', '=', 'areas.id');
+    }
 }

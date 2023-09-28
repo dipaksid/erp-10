@@ -65,7 +65,7 @@ class Customer extends Model
         return $query->where('areas.id', $areaId);
     }
 
-    public static function customertablelist(Builder $query, $searchValue)
+    public static function customertablelist()
     {
         return DB::table('customers')
             ->join('areas', 'customers.areas_id', '=', 'areas.id')

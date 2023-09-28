@@ -215,8 +215,8 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     // Report
     Route::get('/report/staffservice','ReportStaffServiceController@index')->name('report.staffservice');
     Route::post('/report/staffservice','ReportStaffServiceController@reportpdf')->name('report.staffservice');
-    Route::get('/report/outstanding', 'ReportOutstandingController@index')->name('report.outstanding');
-    Route::post('/report/outstanding', 'ReportOutstandingController@reportpdf')->name('report.outstanding');
+    Route::get('/report/outstanding', 'App\Http\Controllers\ReportOutstandingsController@index')->name('report.outstanding');
+    Route::post('/report/outstanding', 'App\Http\Controllers\ReportOutstandingsController@reportpdf')->name('report.outstanding');
     Route::get('/report/receipt', 'App\Http\Controllers\ReportReceiptsController@index')->name('report.receipt');
     Route::post('/report/receipt', 'App\Http\Controllers\ReportReceiptsController@reportpdf')->name('report.receipt');
     Route::get('/report/sales', 'App\Http\Controllers\ReportSalesController@index')->name('report.sales');
@@ -225,8 +225,8 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::post('/report/sticker', 'ReportStickerController@reportpdf')->name('report.sticker');
     Route::get('/report/salesexportlhdn', 'ReportSalesExportLHDNController@index')->name('report.salesexportlhdn');
     Route::post('/report/salesexportlhdn', 'ReportSalesExportLHDNController@reportexcel')->name('report.salesexportlhdn');
-    Route::get('/report/servicemain', 'ReportServiceMainController@index')->name('report.servicemain');
-    Route::post('/report/servicemain', 'ReportServiceMainController@reportpdf')->name('report.servicemain');
+    Route::get('/report/servicemain', 'App\Http\Controllers\ReportServiceMainController@index')->name('report.servicemain');
+    Route::post('/report/servicemain', 'App\Http\Controllers\ReportServiceMainController@reportpdf')->name('report.servicemain');
     Route::get('/report/filemanage', 'ReportFileManageController@index')->name('report.filemanage');
     Route::post('/report/pdftoprinter', 'ReportController@pdftoprinter')->name('report.pdftoprinter');
     Route::get('/report/cancelsales', 'App\Http\Controllers\ReportCancelSalesController@index')->name('report.cancelsales');

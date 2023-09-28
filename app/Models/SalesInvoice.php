@@ -14,7 +14,7 @@ class SalesInvoice extends Model
     protected $fillable = ['salesinvoicecode', 'salesinvoicedate', '  customers_id', 'customername', 'attention', 'fax', 'address1',
         'address2', 'address3', 'address4', 'referenceno', 'docontact', 'dophone', 'dofax', 'doaddress1',
         'doaddress2', 'doaddress3', 'doaddress4', 'doregistationno', 'dogstregno', 'dophone2', 'doemail', 'doremark',
-        'doareaid', 'termid', 'currencyid', 'totalamount', 'discountamount', 'subtotalamount', 'taxtotalamount', 'nettotalamount', 'roundingadjustment'];
+        'doareaid', 'terms_id', 'currencyid', 'totalamount', 'discountamount', 'subtotalamount', 'taxtotalamount', 'nettotalamount', 'roundingadjustment'];
 
 
     public function salesinvoicedetails(){
@@ -119,16 +119,16 @@ class SalesInvoice extends Model
                 $join->on('sales_invoices.customers_id', '=', 'customers.id');
             })
             ->leftjoin('areas',function($join) {
-                $join->on('customers.areaid', '=', 'areas.id');
+                $join->on('customers.areas_id', '=', 'areas.id');
             })
             ->leftjoin('terms',function($join) {
-                $join->on('sales_invoices.termid', '=', 'terms.id');
+                $join->on('sales_invoices.terms_id', '=', 'terms.id');
             })
-            ->leftjoin('customer_group_details',function($join) {
-                $join->on('sales_invoices.customers_id', '=', 'customer_group_details.customers_id');
+            ->leftjoin('customer_groups_customers',function($join) {
+                $join->on('sales_invoices.customers_id', '=', 'customer_groups_customers.customers_id');
             })
             ->leftjoin('customer_groups',function($join) {
-                $join->on('customer_group_details.customergroupid', '=', 'customer_groups.id');
+                $join->on('customer_groups_customers.customer_groups_id', '=', 'customer_groups.id');
             })
             ->whereNull("sales_invoices.cancelled_at");
     }
