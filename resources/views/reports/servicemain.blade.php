@@ -17,7 +17,7 @@
                         <label for="title">Period (MM/YYYY)</label>
                         <input type="text" class="form-control enterseq" placeholder="mm/yyyy" name="period" seq="1"
                                maxlength="7"
-                               value="{{ (isset($default['logindate']))?substr($default['logindate'],3):'' }}"/>
+                               value="{{ (isset($data['logindate'])) ? $data['logindate'] : '' }}"/>
                     </div>
                     <div class="col-3">
                     </div>

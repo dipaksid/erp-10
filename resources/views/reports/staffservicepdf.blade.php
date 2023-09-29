@@ -120,7 +120,7 @@
 				<b style="font-size:19px;font-weight:bold;">BRIGHT-WIN TECHNOLOGY (M) SDN BHD</b>
 				<i style="font-size:7px;">(456842-H)</i><br>
 				<span style="font-size:9px;">21-1A JALAN PERDANA 4/8 TAMAN PANDAN PERDANA 55300 KUALA LUMPUR </span><br>
-				<span style="font-size:9px;">Tel : 03-92824788, 012-2083761 &nbsp;&nbsp;&nbsp; Support Line : 016-2163761</span><img style="width:12px; position:fixed; right:160; top:-97;" src="{{storage_path('imgs/whatsapp.png')}}" /><br>
+				<span style="font-size:9px;">Tel : 03-92824788, 012-2083761 &nbsp;&nbsp;&nbsp; Support Line : 016-2163761</span><img style="width:12px; position:fixed; right:160; top:-97;" src="{{ public_path('img/whatsapp.png') }}" /><br>
 				<span style="font-size:9px;">URL : www.brightwin.com  &nbsp;&nbsp;&nbsp; Email : pychan@brightwin.com &nbsp;</span> <br><br>
 				<b style="font-size:16px;font-weight:bold;">
 					STAFF SERVICE ({{($type==1)?"DETAILS":"SUMMARY"}}) ANALYSIS REPORT <br>{{$request->input("datfr")}} - {{$request->input("datto")}}
@@ -131,11 +131,11 @@
           Staff :
           @php $staff_list = ''; @endphp
           @foreach($gettotal as $skey => $staff_namk)
-            @php
-              $staff_list .= ' '.$staff_namk['name'].' ,';
-            @endphp
-           @endforeach
-           {{substr_replace($staff_list ,"", -1)}}
+                @php
+                  $staff_list .= ' '.$staff_namk['name'].' ,';
+                @endphp
+          @endforeach
+                {{substr_replace($staff_list ,"", -1)}}
          @endif
 			</div>
 
@@ -263,7 +263,7 @@
                         <td class="col col2" align ="left">{{date('d/m/Y',strtotime($iservice->servicedate))}}</td>
                         <td class="col col2" align ="left">{!!(($iservice->servicetype == 2)?$iservice->categorycode."<br>":"")!!}{{$service_type}} {{ (($iservice->servicetype == 2 && $iservice->customerservicerelated()->where('servicetype',2)->whereDate("servicedate","<",date("Y-m-d",strtotime($iservice->servicedate)))->first()==null ) ?"*":"") }}</td>
                         <td class="col col2" align ="left">{{$close_date}}</td>
-                        <td class="col col3" align ="left">@if($iservice->customertype=='1') 
+                        <td class="col col3" align ="left">@if($iservice->customertype=='1')
 															{{$iservice->customer()->first()->companyname}}
 															@elseif($iservice->customertype=='2')
 															{{$iservice->customergroup()->first()->description}}
@@ -273,7 +273,7 @@
                         <td class="col col1" align="right">{{$outstanding}}</td>
             				</tr>
                     @endif
-                
+
                 @endforeach
                 @if($total != 0)
 
