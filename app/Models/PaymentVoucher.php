@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class PaymentVoucher extends Model
 {
@@ -36,19 +37,19 @@ class PaymentVoucher extends Model
     public static function getpaymentlist($request){
         $datefr = Carbon::createFromFormat('d/m/Y', $request->input("pymtdatfr"))->format('Y-m-d');
         $dateto = Carbon::createFromFormat('d/m/Y', $request->input("pymtdatto"))->format('Y-m-d');
-        return DB::table('paymentvouchers')
-            ->selectRaw("paymentvouchers.id, DATE_FORMAT(paymentvouchers.paymentdate, '%d/%m/%Y') as date, paymentvouchers.paymentcode as paymentcode, paymentvouchers.suppliername as name, paymentvouchers.amount as pay_amt, if(paymentvouchers.cancelled_at is null,'','C') as 'status', if(paymentvouchers.companyid='2','red','blue') as 'color'")
-            ->whereDate("paymentvouchers.paymentdate",">=",$datefr)
-            ->whereDate("paymentvouchers.paymentdate","<=",$dateto)
-            ->where("paymentvouchers.companyid",$request->input("companyid"))
-            ->orderBy('paymentvouchers.paymentdate','desc')
-            ->orderBy('paymentvouchers.paymentcode','desc');
+        return DB::table('payment_vouchers')
+            ->selectRaw("payment_vouchers.id, DATE_FORMAT(payment_vouchers.paymentdate, '%d/%m/%Y') as date, payment_vouchers.paymentcode as paymentcode, payment_vouchers.suppliername as name, payment_vouchers.amount as pay_amt, if(payment_vouchers.cancelled_at is null,'','C') as 'status', if(payment_vouchers.companyid='2','red','blue') as 'color'")
+            ->whereDate("payment_vouchers.paymentdate",">=",$datefr)
+            ->whereDate("payment_vouchers.paymentdate","<=",$dateto)
+            ->where("payment_vouchers.companyid",$request->input("companyid"))
+            ->orderBy('payment_vouchers.paymentdate','desc')
+            ->orderBy('payment_vouchers.paymentcode','desc');
     }
 
     public static function getpaymentreportlist(){
-        return DB::table('paymentvouchers')
+        return DB::table('payment_vouchers')
             ->leftjoin('suppliers',function($join) {
-                $join->on('paymentvouchers.supplierid', '=', 'suppliers.id');
+                $join->on('payment_vouchers.supplierid', '=', 'suppliers.id');
             });
     }
 

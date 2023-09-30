@@ -2,7 +2,6 @@
     <head>
         <style type="css/text">
             /** Define the margins of your page **/
-
             @font-face {
                 font-family: 'arialbold';
                 font-style: normal;

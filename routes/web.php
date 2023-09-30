@@ -223,8 +223,8 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::post('/report/sales', 'App\Http\Controllers\ReportSalesController@reportpdf')->name('report.sales');
     Route::get('/report/sticker', 'ReportStickerController@index')->name('report.sticker');
     Route::post('/report/sticker', 'ReportStickerController@reportpdf')->name('report.sticker');
-    Route::get('/report/salesexportlhdn', 'ReportSalesExportLHDNController@index')->name('report.salesexportlhdn');
-    Route::post('/report/salesexportlhdn', 'ReportSalesExportLHDNController@reportexcel')->name('report.salesexportlhdn');
+    Route::get('/report/salesexportlhdn', 'App\Http\Controllers\ReportSalesExportLHDNController@index')->name('report.salesexportlhdn');
+    Route::post('/report/salesexportlhdn', 'App\Http\Controllers\ReportSalesExportLHDNController@reportexcel')->name('report.salesexportlhdn');
     Route::get('/report/servicemain', 'App\Http\Controllers\ReportServiceMainController@index')->name('report.servicemain');
     Route::post('/report/servicemain', 'App\Http\Controllers\ReportServiceMainController@reportpdf')->name('report.servicemain');
     Route::get('/report/filemanage', 'ReportFileManageController@index')->name('report.filemanage');
