@@ -148,7 +148,7 @@ class ReportOutstandingsController extends Controller
         if($request->input("areadesc")!=""){
             $outstanding->where('areas.description', $request->input("areadesc"));
         }
-        $outauc = TaSalesReceipt::selectRaw("substr(salesinvoicecode,4,3) as areacode, if(substr(salesinvoicecode,4,3)='MAL','MELAKA',if(substr(salesinvoicecode,4,3)='SBH','SABAH',if(substr(salesinvoicecode,4,3)='SWK','SARAWAK','OTHER'))) as area_desc,
+        $outauc = Tasalesreceipt::selectRaw("substr(salesinvoicecode,4,3) as areacode, if(substr(salesinvoicecode,4,3)='MAL','MELAKA',if(substr(salesinvoicecode,4,3)='SBH','SABAH',if(substr(salesinvoicecode,4,3)='SWK','SARAWAK','OTHER'))) as area_desc,
 							DATE_FORMAT(salesinvoicedate, '%d/%m/%Y') as date, salesinvoicecode as invoiceno, customername as name, '' as term,
 							nettotalamount as sal_amt, nettotalamount as out_amt, '11' as 'companyid'")
             ->whereDate("salesinvoicedate","<=",$dateutl)
