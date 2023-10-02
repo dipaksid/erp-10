@@ -105,7 +105,7 @@ class AdminMiddleware
                     $classname = "App\\Models\\Supplier";
                     $method = "getModule";
                     break;
-                case 'leaveformpdf':
+                case 'leaveform':
                     $classname = "App\\Models\\LeaveForm";
                     $method = "getModule";
                     break;
