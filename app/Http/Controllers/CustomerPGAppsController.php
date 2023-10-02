@@ -32,9 +32,9 @@ class CustomerPGAppsController extends Controller
         $searchValue = $request->input('searchvalue');
 
         $pwspgapp = CustomerPwspgapp::withUserData()
-            ->searchByKeyword($searchValue)
-            ->paginate(15)
-            ->appends(['searchvalue' => $searchValue]);
+                        ->searchByKeyword($searchValue)
+                        ->paginate(15)
+                        ->appends(['searchvalue' => $searchValue]);
 
         return view('customer_pwspg_apps.index', compact('pwspgapp', 'searchValue'));
     }

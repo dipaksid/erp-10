@@ -44,10 +44,10 @@ class CustomerPwspgapp extends Model
 //            ->orderBy("customer_pwspgapps.users_id");
 
         return $query->selectRaw(
-            "user_details.id as 'id', user_details.username as 'username', " .
-            "user_details.mob_pho as 'mob_pho', user_details.first_name as 'first_name', " .
-            "group_concat(customers.companyname) as 'customer'"
-        )
+                "user_details.id as 'id', user_details.username as 'username', " .
+                "user_details.mob_pho as 'mob_pho', user_details.first_name as 'first_name', " .
+                "group_concat(customers.companyname) as 'customer'"
+            )
             ->leftJoin('user_details', 'customer_pwspgapps.users_id', '=', 'user_details.id')
             ->leftJoin('customers', 'customer_pwspgapps.customers_id', '=', 'customers.id')
             ->groupBy("customer_pwspgapps.users_id")

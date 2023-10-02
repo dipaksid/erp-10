@@ -38,6 +38,8 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
         });
 
+        Route::model('customer_pwspg_app', CustomerPwspgapp::class);
+
         Route::model('totalpayapp', CustomerTotalPayApp::class);
     }
 }

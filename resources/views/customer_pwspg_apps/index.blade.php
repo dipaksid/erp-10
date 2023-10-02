@@ -53,16 +53,18 @@
                             <td class="text-center col-2">
                                 <div class="d-flex">
                                     @can('EDIT PWS PG APP SERVICE')
-                                        <a href="{{ route('customerPwspgApp.edit', ['id' => $rpwspgapp->id]) }}?searchvalue={{ isset($input['searchvalue']) ? $input['searchvalue'] : '' }}&page={{ isset($input['page']) ? $input['page'] : '' }}" class="btn btn-primary ">Edit</a>
+                                        <a href="{{ route('customerPwspgApp.edit', $rpwspgapp->id) }}?searchvalue={{ isset($input['searchvalue']) ? $input['searchvalue'] : '' }}&page={{ isset($input['page']) ? $input['page'] : '' }}" class="btn btn-primary">
+                                            Edit
+                                        </a>
                                     @endcan
-
+                                    &nbsp;
                                     @can('DELETE PWS PG APP SERVICE')
                                         <form action="{{ action('App\Http\Controllers\CustomerPGAppsController@destroy', $rpwspgapp->id) }}" method="post" id="deleteForm_{{ $rpwspgapp->id }}">
-                                            @csrf
-                                            @method('DELETE')
+                                        @csrf
+                                        @method('DELETE')
 
-                                            <button class="btn btn-danger" type="submit" onclick="showConfirmDeleteModal(event, {{ $rpwspgapp->id }})">Delete</button>
-                                        </form>
+                                        <button class="btn btn-danger" type="submit" onclick="showConfirmDeleteModal(event, {{ $rpwspgapp->id }})">Delete</button>
+                                    </form>
                                     @endcan
                                 </div>
                             </td>
