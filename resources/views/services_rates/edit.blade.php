@@ -84,11 +84,12 @@
                             $get_effective = json_decode($services_rate->description);
                             $num=0;
                         @endphp
-                        @if(is_array($get_effective) && count($variable) > 0)
+                        @if(is_array($get_effective) && count($get_effective) > 0)
                             @foreach($get_effective as $key => $value)
                                 @php $num++; @endphp
                                 <tr class="d-flex" id="inputFormRow">
-                                    <td class="col-sm-8">{{ $get_effective->count() }}<input type="text" class="form-control enterseq" name="d_description[]" value="{{ $value->description ?? 'NA' }}" ></td>
+                                    <td class="col-sm-8">
+                                        <input type="text" class="form-control enterseq" name="d_description[]" value="{{ $value->description ?? 'NA' }}" ></td>
                                     <td class="col-sm-2"><input type="text" class="form-control enterseq" name="d_rate[]" value="{{  (isset($value->rate)) ?  number_format((float) $value->rate, 2) : 0 }}" ></td>
                                     <td class="col-sm-2"><button type="button" class="btn btn-warning btn-xs fas fa-trash" id="removeRow"></button></td>
                                 </tr>

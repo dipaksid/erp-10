@@ -16,4 +16,5 @@ class Tasalesreceipt extends Model
     protected $table = 'ta_sales_receipts';
 
     protected $fillable = ['salesinvoicecode', 'salesinvoicedate', 'receiptcode', 'receiptdate', 'customername', 'nettotalamount', 'bankdoc_id', 'companyid'];
+    
 }
