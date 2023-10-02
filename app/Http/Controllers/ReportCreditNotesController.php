@@ -7,7 +7,7 @@ use App\Models\SalesInvoice;
 use App\Models\Receipt;
 use App\Models\Area;
 use Carbon\Carbon;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
 use Illuminate\Http\Request;
 

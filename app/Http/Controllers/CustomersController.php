@@ -39,7 +39,6 @@ class CustomersController extends Controller
         $customers = Customer::searchCustomer($filters);
         $pdffile = null;
         if ($request->has('btnpdf') && $request->input('btnpdf') !== "" && $request->get('btnpdf') !== null) {
-            dd("123");
             $pdffile = url("/pdf/".$this->generatePdf($customers));
             session()->flash('success', 'Filtered PDF generated successfully created!');
         }

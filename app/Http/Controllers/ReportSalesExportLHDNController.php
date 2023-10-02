@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use PDF;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SalesExport;
+use App\Exports\PaymentExport;
 use App\Models\Customer;
 use App\Models\PaymentVoucher;
 use App\Models\Supplier;
@@ -39,8 +41,8 @@ class ReportSalesExportLHDNController extends Controller
 
         return view('reports.salesexportlhdn',compact('data','customers'));
     }
-    public function reportexcel(Request $request)
-    {
+
+    public function reportexcel(Request $request){
         $customerfr = Customer::where("id",$request->input("customerfrom"))->first();
         $customerto = Customer::where("id",$request->input("customerto"))->first();
         if($request->input("area")!=""){
@@ -48,6 +50,7 @@ class ReportSalesExportLHDNController extends Controller
         }
         $datefr = Carbon::createFromFormat('d/m/Y', $request->input("datfr"))->format('Y-m-d');
         $dateto = Carbon::createFromFormat('d/m/Y', $request->input("datto"))->format('Y-m-d');
+
         $condsql=""; $arrfilter=array(); $acust=array();
         if($request->input("exp_typ")=="2"){
             $paymentto = PaymentVoucher::getpaymentreportlist()
@@ -69,75 +72,16 @@ class ReportSalesExportLHDNController extends Controller
             }
             $paymentto->orderBy('payment_vouchers.suppliername','asc');
 
-            if ($paymentto->exists()) {
-                $arr_payment = $paymentto->get();
-                $arr_data[1] = $arr_payment;
+            if(1) {
+                $arr_payment=$paymentto->get();
+                $arr_data[1]=$arr_payment;
 
-                $excel = \Maatwebsite\Excel\Excel::create('PEMBEKAL MAKLUMAT/PEMBAYAR', function($excel) use ($arr_data) {
-                    $excel->setTitle('PEMBEKAL')
-                        ->setCreator('Brightwin')
-                        ->setCompany('Brightwin');
-
-                    $excel->sheet('DETAIL', function($sheet) use ($arr_data) {
-                        $sheet->setColumnFormat([
-                            'E' => '@',
-                            'O' => '0.00',
-                            'R' => 'dd/mm/yyyy',
-                        ]);
-
-                        $sheet->row(1, [
-                            'BIL', 'NAMA', 'KP LAMA', 'KP BARU', 'NO ROC / ROB', 'NO RUJUKAN CUKAI PENDAPATAN', 'ALAMAT 1', 'ALAMAT 2', 'ALAMAT 3', 'POSKOD', 'BANDAR', 'NEGERI', 'KOD LUAR NEGARA', 'NO TELEFON', 'JUMLAH BAYARAN/ KOMISEN', 'JUMLAH INSENTIF BUKAN BERUPA TUNAI', 'JENIS INSENTIF BUKAN BERUPA TUNAI', 'TARIKH', 'JENIS BAYARAN KERJA', 'NAMA', 'KP LAMA', 'KP BARU', 'NO RUJUKAN CUKAI PENDAPATAN', 'NO PENDAFTARAN SYKT', 'ALAMAT 1', 'ALAMAT 2', 'ALAMAT 3', 'POSKOD', 'BANDAR1', 'NEGERI1', 'KOD LUAR NEGARA', 'NO TELEFON'
-                        ]);
-
-                        $nlop = 2;
-                        $nrno = 1;
-                        $totnetamount = 0;
-
-                        foreach ($arr_data as $n_f => $arr_data1) {
-                            if ($arr_data1) {
-                                foreach ($arr_data1 as $row_data) {
-                                    $supplier = Supplier::where('id', $row_data->supplierid)->first();
-                                    $version = (in_array($n_f, [1, 2, 3, 6])) ? "VER 1.0" : "";
-                                    $arr_inv = json_decode($row_data->sup_inv_no, true);
-                                    $payfor = "Bayar Untuk Inv: ";
-                                    $ff = 0;
-
-                                    if ($arr_inv) {
-                                        foreach ($arr_inv as $row_inv) {
-                                            if ($ff > 0) {
-                                                $payfor .= "," . $row_inv;
-                                            } else {
-                                                $payfor .= $row_inv;
-                                            }
-                                            $ff++;
-                                        }
-                                    }
-
-                                    $sheet->row($nlop, [
-                                        $nrno, $row_data->companyname, '', '', $row_data->registrationno, '', $row_data->address1, $row_data->address2, $row_data->address3, $row_data->zipcode, $row_data->bandar, $supplier->area1->description, '', $row_data->phoneno1, $row_data->amount, '', '', $row_data->date, $payfor, $row_data->contactperson, "", "", "", "", "", "", "", "", "", "", "", $row_data->phoneno1
-                                    ]);
-
-                                    $sheet->setCellValueExplicit('E' . $nlop, $row_data->registrationno); // number to string
-
-                                    $nrno++;
-                                    $nlop++;
-                                    $totnetamount += $row_data->amount;
-                                }
-                            }
-                        }
-
-                        $sheet->row($nlop, [
-                            '', '', '', '', '', '', '', '', '', '', '', '', '', '', $totnetamount, '', '', '', '', '', '', '', '', '', '', ''
-                        ]);
-                    });
-                });
-
-                return $excel->download("xls");
+                return Excel::download(new PaymentExport($arr_data), 'PEMBEKAL_MAKLUMAT_PEMBAYAR.xlsx');
             } else {
                 return view('reports.norecord');
+                //abort('404');
             }
         } else {
-
             $salespawn = SalesInvoice::getsalesreportlist($request)
                 ->selectRaw("sales_invoices.customername as 'companyname', if(customers.registrationno!='',customers.registrationno,customers.registrationno2) as 'registrationno', customers.phoneno1, customers.address1, customers.address2, customers.address3, customers.bandar,
 								customers.bandar, customers.zipcode, customers.areas_id, DATE_FORMAT(sales_invoices.salesinvoicedate, '%d/%m/%Y') as date, sales_invoices.customers_id,
@@ -432,7 +376,9 @@ class ReportSalesExportLHDNController extends Controller
             $salesother->orderBy('sales_invoices.customername','asc');
             $salesother2->orderBy('sales_invoices.customername','asc');
 
-            if(true) {
+            if ($salespawn->exists() || $salesgold->exists() || $salesmoney->exists() || $salesmaintain->exists() || $saleshardwaremaintain->exists() || $salescctvsystem->exists()
+                || $salescctvmaintain->exists() || $salesokiprinter->exists() || $salespawnticket->exists() || $salesgoldresit->exists() || $salesreminder->exists() || $salesribbon->exists()
+                || $salesplainform->exists() || $salesdomain->exists() || $salesbattery->exists() || $salesother->exists() || $salesother2->exists()) {
                 $arr_pawn=$salespawn->get();
                 $arr_gold=$salesgold->get();
                 $arr_money=$salesmoney->get();
@@ -468,51 +414,13 @@ class ReportSalesExportLHDNController extends Controller
                 $arr_data[16]=$arr_other;
                 $arr_data[17]=$arr_other2;
 
-                $excel = \Maatwebsite\Excel\Excel::create('PEMBELI_DAN_PENERIMA_PERKHIDMATAN_Pawnbroker_Management_Software', function($excel) use($arr_data) {
-                    $excel->setTitle('PERKHIDMATAN')
-                        ->setCreator('Brightwin')
-                        ->setCompany('Brightwin');
+                $arr_data = [
+                    $arr_pawn, $arr_gold, $arr_money, $arr_maintain, $arr_hardwaremaintain, $arr_cctvsys, $arr_cctvmain,
+                    $arr_okiprinter, $arr_pawnticket, $arr_goldresit, $arr_reminder, $arr_ribbon, $arr_plainform, $arr_salesdomain,
+                    $arr_battery, $arr_other, $arr_other2
+                ];
 
-                    $excel->sheet('DETAIL', function($sheet) use($arr_data) {
-                        $sheet->setColumnFormat([
-                            'E' => '@',
-                            'Y' => '0.00',
-                            'X' => 'dd/mm/yyyy',
-                        ]);
-
-                        $sheet->row(1, [
-                            'BIL', 'NAMA PELANGGAN', 'KP LAMA', 'KP BARU', 'NO PENDAFTARAN SYKT', 'NO RUJUKAN CUKAI PENDAPATAN', 'ALAMAT 1', 'ALAMAT 2', 'ALAMAT 3', 'POSKOD', 'BANDAR', 'NEGERI', 'KOD LUAR NEGARA', 'NO TELEFON', 'JENIS PERISIAN ATAU PERKHIDMATAN', 'MODEL / VERSI', 'ALAMAT ASET 1', 'ALAMAT ASET 2', 'ALAMAT ASET 3', 'POSKOD', 'BANDAR', 'NEGERI', 'KOD LUAR NEGARA', 'TARIKH JUALAN / PERKHIDMATAN', 'JUM BYR PERISIAN / PERKHIDMATAN', 'TAHUN BERAKHIR'
-                        ]);
-
-                        $nlop = 2;
-                        $nrno = 1;
-                        $totnetamount = 0;
-
-                        foreach ($arr_data as $n_f => $arr_data1) {
-                            if ($arr_data1) {
-                                foreach ($arr_data1 as $row_data) {
-                                    $customer = Customer::where('id', $row_data->customers_id)->first();
-                                    $version = (in_array($n_f, [1, 2, 3, 6])) ? "VER 1.0" : "";
-                                    $sheet->row($nlop, [
-                                        $nrno, $row_data->companyname, '', '', $row_data->registrationno, '', $row_data->address1, $row_data->address2, $row_data->address3, $row_data->zipcode, $row_data->bandar, $customer->area1->description, '', $row_data->phoneno1, $row_data->description, $version, $row_data->address1, $row_data->address2, $row_data->address3, $row_data->zipcode, $row_data->bandar, $customer->area1->description, 'D', $row_data->date, $row_data->netamount, substr($row_data->date, 6, 4)
-                                    ]);
-
-                                    $sheet->setCellValueExplicit('E' . $nlop, $row_data->registrationno); // number to string
-
-                                    $nrno++;
-                                    $nlop++;
-                                    $totnetamount += $row_data->netamount;
-                                }
-                            }
-                        }
-
-                        $sheet->row($nlop, [
-                            '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', $totnetamount, ''
-                        ]);
-                    });
-                });
-                return $excel->download("xls");
-
+                return Excel::download(new SalesExport($arr_data), 'PEMBELI_DAN_PENERIMA_PERKHIDMATAN_Pawnbroker_Management_Software.xlsx');
             } else {
                 return view('reports.norecord');
                 //abort('404');

@@ -11,7 +11,7 @@ class SalesInvoice extends Model
 
     protected $table = ['sales_invoices'];
 
-    protected $fillable = ['salesinvoicecode', 'salesinvoicedate', '  customers_id', 'customername', 'attention', 'fax', 'address1',
+    protected $fillable = ['salesinvoicecode', 'salesinvoicedate', 'customers_id', 'customername', 'attention', 'fax', 'address1',
         'address2', 'address3', 'address4', 'referenceno', 'docontact', 'dophone', 'dofax', 'doaddress1',
         'doaddress2', 'doaddress3', 'doaddress4', 'doregistationno', 'dogstregno', 'dophone2', 'doemail', 'doremark',
         'doareaid', 'terms_id', 'currencyid', 'totalamount', 'discountamount', 'subtotalamount', 'taxtotalamount', 'nettotalamount', 'roundingadjustment'];
@@ -137,7 +137,7 @@ class SalesInvoice extends Model
         return DB::table('sales_invoices')
             ->join('customers', 'sales_invoices.customers_id', '=', 'customers.id')
             ->join('sales_invoices_details', 'sales_invoices.id', '=', 'sales_invoices_details.invoiceid')
-            ->join('stocks', 'sales_invoices_details.stockid', '=', 'stocks.id')
+            ->join('stocks', 'sales_invoices_details.stocks_id', '=', 'stocks.id')
             ->selectRaw("sales_invoices.id, DATE_FORMAT(sales_invoices.salesinvoicedate, '%d/%m/%Y') as date,sales_invoices.salesinvoicecode as invoiceno, customers.companyname as name,sales_invoices.nettotalamount as sal_amt, if(sales_invoices.cancelled_at is null,'','C') as 'status', if(sales_invoices.companyid='2','red','blue') as 'color'")
             ->whereRaw("stocks.stockcode like '%".$stockcode."%'")
             ->groupBy('sales_invoices.id')

@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\CompanySetting;
+use App\Models\Receipt;
+use App\Models\Report;
 use App\Models\SalesInvoice;
 use App\Services\DataService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use LynX39\LaraPdfMerger\Facades\PdfMerger;
+use PDF;
 use RPTPDF;
 
 class ReportSalesController extends Controller
@@ -158,7 +164,7 @@ class ReportSalesController extends Controller
                 RPTPDF::SetMargins(10, 10, 10, true);
                 RPTPDF::SetAutoPageBreak(false, 10);
                 RPTPDF::AddPage();
-                RPTPDF::writeHTML(view('report.salespdf1',compact('data','request','npage','totpage','finalpage','sum','totsum','company','bcompg','sum2')), true, false, true, false, '');
+                RPTPDF::writeHTML(view('reports.salespdf1',compact('data','request','npage','totpage','finalpage','sum','totsum','company','bcompg','sum2')), true, false, true, false, '');
                 $npage++;
             }
             return RPTPDF::Output(storage_path("sales_report.pdf"));
@@ -167,7 +173,7 @@ class ReportSalesController extends Controller
             view()->share('request',$request);
             PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif']);
             // pass view file
-            $pdf = PDF::loadView('report.salespdf');
+            $pdf = PDF::loadView('reports.salespdf');
             $pdf->getDomPDF()->set_option("enable_php", true);
             return $pdf->stream();
         } else {

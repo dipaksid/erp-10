@@ -23,11 +23,11 @@
                 height: 180px;
             }
             footer {
-                position: fixed; 
-                bottom: -30px; 
-                left: 0px; 
+                position: fixed;
+                bottom: -30px;
+                left: 0px;
                 right: 0px;
-                height: 30px; 
+                height: 30px;
             }
             div.col{
                 float:left;
@@ -38,9 +38,9 @@
                 float:left;
                 font-size: 9px;
                 padding:5px;
-                border-top: 1px solid; 
+                border-top: 1px solid;
                 font-weight: bold;
-                border-bottom: 1px solid; 
+                border-bottom: 1px solid;
             }
             div.col1{
                 width:100px;
@@ -52,7 +52,7 @@
                 width:60px;
             }
             div.col4{
-                width:200px;
+                width:180px;
             }
             div.col5{
                 width:200px;
@@ -70,7 +70,7 @@
             div.moneyconvert{
                 font-size: x-small;
             }
-            div.page-break{ page-break-after: always; } 
+            div.page-break{ page-break-after: always; }
             .text-center{
                 text-align: center;
             }
@@ -94,7 +94,7 @@
         </script>
         <!-- Define header and footer blocks before your content -->
         <header>
-            <img style='width:20px; position:fixed; right:160; top:-97;' src="{{storage_path('imgs/whatsapp.png')}}">
+            <img style='width:20px; position:fixed; right:160; top:-97;' src="{{public_path('img/whatsapp.png')}}">
             <div class="invheader">
                 <div class="text-center">
                     <b style="font-size:19px;font-weight:bold;">BRIGHT-WIN TECHNOLOGY (M) SDN BHD</b>
@@ -103,7 +103,7 @@
                 <div class="text-center" style="font-size:10px;">
                     21-1A JALAN PERDANA 4/8 TAMAN PANDAN PERDANA 55300 KUALA LUMPUR<br>
                     Tel : 03-92824788, 012-2083761 &nbsp;&nbsp;&nbsp; Support Line : 016-2163761 <br>
-                    URL : www.brightwin.com  &nbsp;&nbsp;&nbsp; Email : pychan@brightwin.com &nbsp; 
+                    URL : www.brightwin.com  &nbsp;&nbsp;&nbsp; Email : pychan@brightwin.com &nbsp;
                 </div>
                 <div class="text-center">
                     <h2 style="font-family: 'arialbold'; padding:0;">
@@ -132,7 +132,7 @@
                         </div>
                         <div class="fclear"></div>
                     </div>
-                   
+
                     <div style="width:610px;">
                         <div style="float:left;width:160px;">
                             <div style="padding:2px;font-size:12px;">Area Code </div>
@@ -159,7 +159,7 @@
         </header>
 
         <footer>
-            
+
         </footer>
 
         <!-- Wrap the content of your PDF inside a main tag -->
@@ -201,7 +201,7 @@
 					<div class="fclear"></div>
 				</div>
 				@php
-					$kdate = $rows->cndate;					
+					$kdate = $rows->cndate;
 					$sum[$kdate]["cn_amt"] = (isset($sum[$kdate]["cn_amt"]))?$sum[$kdate]["cn_amt"]+$rows->cn_amt:$rows->cn_amt;
 					$totsum["cn_amt"]+=$rows->cn_amt;
 					$ilop++;
