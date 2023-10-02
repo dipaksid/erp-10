@@ -6,7 +6,7 @@ use App\Models\Area;
 use App\Models\Customer;
 use App\Models\Report;
 use App\Models\SalesInvoice;
-use App\Models\TaSalesReceipt;
+use App\Models\Tasalesreceipt;
 use App\Models\CompanySetting;
 use App\Services\DataService;
 use Illuminate\Http\Request;
