@@ -86,7 +86,10 @@ Route::group(['middleware' => 'auth', 'middleware' => 'isAdmin'], function()
     Route::get('customer-services/agentlist', 'App\Http\Controllers\CustomerServiceController@agentlist')->name('customerservice.agentlist');
     Route::resource('customer-services', 'App\Http\Controllers\CustomerServicesController');
     Route::get('customer-pwspg-app/customerlist', 'App\Http\Controllers\CustomerPGAppsController@customerlist')->name('customerPwspgApp.customerlist');
-    Route::resource('customer-pwspg-app', App\Http\Controllers\CustomerPGAppsController::class);
+    Route::resource('customer-pwspg-app', App\Http\Controllers\CustomerPGAppsController::class)->except([
+        'edit'
+    ]);
+    Route::get('customer-pwspg-app/{id}/edit', [App\Http\Controllers\CustomerPGAppsController::class, 'edit'])->name('customerPwspgApp.edit');
     Route::get('totalpayapp/customerlist', 'App\Http\Controllers\TotalpayAppsController@customerlist')->name('totalpayapp.customerlist');
     Route::resource('totalpayapp', App\Http\Controllers\TotalpayAppsController::class);
     Route::resource('banks', App\Http\Controllers\BanksController::class);
