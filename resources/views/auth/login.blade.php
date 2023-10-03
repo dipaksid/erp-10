@@ -51,7 +51,7 @@
                             <label for="login_date" class="col-md-4 col-form-label text-md-end">{{ __('Login Date') }}</label>
 
                             <div class="col-md-6">
-                                <input id="login_date" type="datetime-local" class="form-control @error('login_date') is-invalid @enderror" name="login_date" value="{{ date('Y-m-d H:i:s') }}" required>
+                                <input id="login_date" type="datetime-local" class="form-control @error('login_date') is-invalid @enderror" name="login_date" value="{{ date('d-m-Y') }}" required>
 
                                 @error('login_date')
                                     <span class="invalid-feedback .text-danger" role="alert">
@@ -78,7 +78,7 @@
 @endsection
 @section('scripts')
     <script>
-        flatpickr("input[type=datetime-local]", { dateFormat: 'Y-m-d H:i:s' });
+        flatpickr("input[type=datetime-local]", { dateFormat: 'd-m-Y',defaultDate: "today" });
     </script>
     <script  type="module">
         $(function(){

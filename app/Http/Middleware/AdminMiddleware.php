@@ -125,6 +125,10 @@ class AdminMiddleware
                     $classname = "App\\Models\\TrainingForm";
                     $method = "getModule";
                     break;
+                case 'customercategory':
+                    $classname = "App\\Models\\CustomerCategory";
+                    $method = "getModule";
+                    break;
                 default:
                     $classname = "App\\Models\\" . ucfirst($singularSegment);
                     $method = "getModule";
