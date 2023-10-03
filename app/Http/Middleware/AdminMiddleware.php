@@ -129,6 +129,10 @@ class AdminMiddleware
                     $classname = "App\\Models\\CustomerCategory";
                     $method = "getModule";
                     break;
+                case 'stockcategories':
+                    $classname = "App\\Models\\StockCategory";
+                    $method = "getModule";
+                    break;
                 default:
                     $classname = "App\\Models\\" . ucfirst($singularSegment);
                     $method = "getModule";

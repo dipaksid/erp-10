@@ -430,7 +430,7 @@ class TrainingFormsController extends Controller
                 ->get();
 
             $companysetting = CompanySetting::where("b_default", "Y")->first();
-            $companyid = $companysetting->id;
+            $companyid = isset($companysetting->id) ?? null;
 
             view()->share('trainingform', $trainingform);
             view()->share('data', $trainingform);
